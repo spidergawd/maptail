@@ -136,7 +136,8 @@ window.onload = function () {
       if (this.length < 4) this.maxAge += 40
       this.maxAge = Math.max(this.maxAge, 5)
     }
-  , createFlyingDot: function (geo) {
+
+/*  , createFlyingDot: function (geo) {
       var marker = map.markers.list[geo.ip]
       if (!marker) return
       var source = {
@@ -152,6 +153,7 @@ window.onload = function () {
         marker.ipList.object.classList.remove('hovered')
       }, 700)
     }
+*/
   , destroySoon: function (key, item) {
       var self = this
       clearTimeout(item.removeTimeout)        
@@ -166,7 +168,7 @@ window.onload = function () {
       var self = this
       var list = this.list
 
-      if (!this.regexp) return this.createFlyingDot(geo)
+   //   if (!this.regexp) return this.createFlyingDot(geo)
 
       var found = false, item
       if (geo.message && (
@@ -175,7 +177,7 @@ window.onload = function () {
           || (geo.city && geo.city.match(this.regexp))
           )
         ) {
-        this.createFlyingDot(geo)        
+//        this.createFlyingDot(geo)        
         for (var k in this.list) {
           if (levenshtein(geo.message, k) <= 12) {
             found = true
