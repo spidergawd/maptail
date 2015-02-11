@@ -12,7 +12,7 @@ function connect (callback) {
   var simpl = require('simpl')
   var client = simpl.createClient()
   client.use(simpl.events())
-  client.use(simpl.json())
+  client.use(simpl.json()) 
   client.on('connect', callback)
 }
 
@@ -58,14 +58,14 @@ window.onload = function () {
         this.list.push(dot)
       }
     }
-  , max: 300
+  , max: 500
   , list: []
   , tick: function () {
       var self = this
       var list = this.list
       var toRemove = []
       list.forEach(function (dot) {
-        dot.tick()
+        //dot.tick()
         dot.draw()
         if (Math.abs(dot.target.x - dot.x) < 3
           && Math.abs(dot.target.y - dot.y) < 3) {
@@ -94,28 +94,7 @@ window.onload = function () {
     this.target.y += 3
     this.x = source.x
     this.y = source.y
-    this.vx = -15 + Math.random() * 5
-    this.vy = (Math.random() * 6) - 3
-  }
-
-  Dot.prototype.tick = function () {
-    var dist = { x: this.target.x - this.x, y: this.target.y - this.y }
-    this.vx += (this.vx * (0.58 + (Math.random() * 0.04))) + (dist.x * 0.00070) * Math.max(1, Math.min(9 - (Math.abs(dist.x) * 0.0011), 9) )
-    this.vy += (this.vy * (0.58 + (Math.random() * 0.04))) + (dist.y * 0.00070) * Math.max(1, Math.min(9 - (Math.abs(dist.y) * 0.0011), 9) )
-
-    var l = 6, vx = this.vx, vy = this.vy
-    if (this.vx > 0 && this.vx > l) this.vx *= 0.82 , this.vy *= Math.random () * 0.05
-    if (this.vx < 0 && this.vx < -l) this.vx *= 0.82 , this.vy *= Math.random () * 0.05
-    if (this.vy > 0 && this.vy > l) this.vy *= 0.82 , this.vx *= Math.random () * 0.05
-    if (this.vy < 0 && this.vy < -l) this.vy *= 0.82 , this.vx *= Math.random () * 0.05
-
-    this.x += vx
-    this.y += vy
-
-    this.vx *= 0.545
-    this.vy *= 0.545
-  }
-
+ }
   Dot.prototype.draw = function () {
     this.object.style.left = Math.floor(this.x) + 'px'
     this.object.style.top = Math.floor(this.y) + 'px'
@@ -136,24 +115,6 @@ window.onload = function () {
       if (this.length < 4) this.maxAge += 40
       this.maxAge = Math.max(this.maxAge, 5)
     }
-
-/*  , createFlyingDot: function (geo) {
-      var marker = map.markers.list[geo.ip]
-      if (!marker) return
-      var source = {
-        x: marker.ipList.object.parentNode.offsetLeft + marker.ipList.object.offsetLeft + 100
-      , y: marker.ipList.object.parentNode.offsetTop + marker.ipList.object.offsetTop + 6
-      }
-      var target = map.latLongToPx(marker.latlon)
-      target.x += map.offset.x + map.margin
-      target.y += map.offset.y + map.margin
-      dots.add(source, target)
-      marker.ipList.object.classList.add('hovered')
-      setTimeout(function () {
-        marker.ipList.object.classList.remove('hovered')
-      }, 700)
-    }
-*/
   , destroySoon: function (key, item) {
       var self = this
       clearTimeout(item.removeTimeout)        
@@ -167,9 +128,6 @@ window.onload = function () {
   , consider: function (geo) {
       var self = this
       var list = this.list
-
-   //   if (!this.regexp) return this.createFlyingDot(geo)
-
       var found = false, item
       if (geo.message && (
           (geo.message.match(this.regexp))
@@ -177,7 +135,6 @@ window.onload = function () {
           || (geo.city && geo.city.match(this.regexp))
           )
         ) {
-//        this.createFlyingDot(geo)        
         for (var k in this.list) {
           if (levenshtein(geo.message, k) <= 12) {
             found = true
@@ -544,7 +501,7 @@ window.onload = function () {
 
   ;(function tick () {
     map.markers.age()
-    dots.tick()
+    //dots.tick()
     window.requestAnimFrame(tick)
   }());
 }
