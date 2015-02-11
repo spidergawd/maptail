@@ -65,7 +65,6 @@ window.onload = function () {
       var list = this.list
       var toRemove = []
       list.forEach(function (dot) {
-        //dot.tick()
         dot.draw()
         if (Math.abs(dot.target.x - dot.x) < 3
           && Math.abs(dot.target.y - dot.y) < 3) {
@@ -94,7 +93,7 @@ window.onload = function () {
     this.target.y += 3
     this.x = source.x
     this.y = source.y
- }
+  }
   Dot.prototype.draw = function () {
     this.object.style.left = Math.floor(this.x) + 'px'
     this.object.style.top = Math.floor(this.y) + 'px'
@@ -104,6 +103,7 @@ window.onload = function () {
   var active = document.getElementById('active-number')
   var regexpInput = document.getElementById('regexp')
 
+  // current events with geo match
   var matches = {
     object: document.getElementById('matches')
   , list: {}
@@ -116,6 +116,8 @@ window.onload = function () {
       this.maxAge = Math.max(this.maxAge, 5)
     }
   , destroySoon: function (key, item) {
+      // clears existing timeout and assigns new one
+      // to destroy this item when it ages
       var self = this
       clearTimeout(item.removeTimeout)        
       item.removeTimeout = setTimeout(function () {
@@ -126,6 +128,9 @@ window.onload = function () {
       }, Math.pow(self.maxAge, item.hits))
     }
   , consider: function (geo) {
+      // evaluates receved event against regular expression
+      // conditionally adds to list and
+      // (re)sets timer via destroySoon 
       var self = this
       var list = this.list
       var found = false, item
@@ -501,7 +506,6 @@ window.onload = function () {
 
   ;(function tick () {
     map.markers.age()
-    //dots.tick()
     window.requestAnimFrame(tick)
   }());
 }
