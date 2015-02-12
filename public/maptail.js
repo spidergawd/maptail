@@ -14,7 +14,7 @@ function connect (callback) {
   client.use(simpl.events())
   client.use(simpl.json()) 
   client.on('connect', callback)
-}
+} //connect
 
 function safe (text) {
   return text
@@ -46,7 +46,7 @@ function ansiToHtml (text) {
     }
     return '</span><span style="' + style + '">'
   })
-}
+} //ansiToHtml
 
 window.onload = function () {
   var dots = {
@@ -57,7 +57,7 @@ window.onload = function () {
         this.object.appendChild(dot.object)
         this.list.push(dot)
       }
-    }
+    } //add:
   , max: 500
   , list: []
   , tick: function () {
@@ -75,15 +75,15 @@ window.onload = function () {
       toRemove.forEach(function (dot) {
         list.splice(list.indexOf(dot), 1)
       })
-    }
+    } //tick:
   , clear: function () {
       var self = this
       this.list.forEach(function (dot) {
         self.object.removeChild(dot.object)
       })
       this.list = []
-    }
-  }
+    } //clear
+  } //var dots
 
   function Dot (source, target) {
     this.object = document.createElement('div')
@@ -93,7 +93,7 @@ window.onload = function () {
     this.target.y += 3
     this.x = source.x
     this.y = source.y
-  }
+  } //Dot
   Dot.prototype.draw = function () {
     this.object.style.left = Math.floor(this.x) + 'px'
     this.object.style.top = Math.floor(this.y) + 'px'
@@ -114,7 +114,7 @@ window.onload = function () {
       if (this.length > 7) this.maxAge -= 30
       if (this.length < 4) this.maxAge += 40
       this.maxAge = Math.max(this.maxAge, 5)
-    }
+    } // recalcMaxAge
   , destroySoon: function (key, item) {
       // clears existing timeout and assigns new one
       // to destroy this item when it ages
@@ -126,7 +126,7 @@ window.onload = function () {
         self.length--
         self.recalcMaxAge()
       }, Math.pow(self.maxAge, item.hits))
-    }
+    } //destroySoon
   , consider: function (geo) {
       // evaluates receved event against regular expression
       // conditionally adds to list and
@@ -158,19 +158,19 @@ window.onload = function () {
           this.destroySoon(geo.message, item)
         }
       }
-    }
+    } //consider
   , clear: function () {
       this.object.innerHTML = ''
       this.list = {}
       this.regexp = false
     }
-  }
+  } // clear
 
   function HashItem (geo) {
     this.object = document.createElement('div')
     this.hits = 1
     this.set(geo)
-  }
+  } //HashItem
   HashItem.prototype.inc = function () {
     this.hits++
   }
@@ -203,7 +203,7 @@ window.onload = function () {
       if (!this.freeze) {
         this.append(line)
       }
-    }
+    } // add:
   , append: function (line) {
       this.object.appendChild(line.object)
       if (this.lines.length > 12) {
@@ -212,14 +212,14 @@ window.onload = function () {
       this.lines.forEach(function (line, index) {
         line.object.style.opacity = (1.0 / 12) * index
       })
-    }
-  }
+    } //append:
+  } //var messages
 
   function LineItem (message) {
     this.message = message
     this.object = document.createElement('div')
     this.object.innerHTML = ansiToHtml(safe(message))
-  }
+  } // LineItem
 
   messages.object.onmouseover = function (e) {
     clearTimeout(messages.mouseoutTimeout)
@@ -227,7 +227,7 @@ window.onload = function () {
       messages.freeze = messages.lines.length - 1
       messages.lastLine = messages.lines[messages.freeze]
     }
-  }
+  } //messages.object.onmouseover
   messages.object.onmouseout = function (e) {
     if (messages.freeze) {
       messages.mouseoutTimeout = setTimeout(function () {
@@ -237,7 +237,7 @@ window.onload = function () {
         messages.freeze = 0
       }, 1000)
     }
-  }
+  } //messages.object.onmouseout
 
   function createMap () {
     var map = {}
@@ -262,7 +262,7 @@ window.onload = function () {
         } else {
           this.freeze.push(marker)
         }
-      }
+      } //map.markers
     , append: function (marker) {
         var self = this
         this.active++
@@ -293,14 +293,14 @@ window.onload = function () {
           marker.object.classList.remove('hovered')
           messages.object.onmouseout()
         }
-      }
+      } // append:
     , remove: function (marker) {
         if (this.freeze) {
           this.freezeRemove.push(marker)
         } else {
           this.destroy(marker)
         }
-      }
+      } //remove:
     , destroy: function (marker) {
         if (marker.ip in this.list) {
           this.active--
@@ -315,7 +315,7 @@ window.onload = function () {
             this.ipList.removeChild(marker.ipList.object)
           } catch (e) {}
         }
-      }
+    } destroy:
     , forEach: function (fn) {
         var self = this
         Object.keys(this.list).forEach(function (key) {
@@ -332,7 +332,7 @@ window.onload = function () {
           marker.age()
         })
       }
-    }
+    } //map.markers
     map.placeMarker = function (geo) {
       var marker
       geo.date += config.timeDiff
@@ -347,7 +347,7 @@ window.onload = function () {
         marker.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
         marker.date = geo.date
       }
-    }
+    } //map.placeMarker
     map.object.style.position = 'absolute'
     map.object.style.margin = map.margin + 'px'
 
@@ -356,8 +356,7 @@ window.onload = function () {
       .path(mapVector)
       .attr({
         stroke: "#333"
-      , 'stroke-width': 1.05
-      })
+      , 'stroke-width': 1.05 })
 
     function Marker (geo) {
       this.ip = geo.ip
@@ -366,9 +365,7 @@ window.onload = function () {
       
       this.object = document.createElement('div')
       this.object.className = 'marker'
-      this.location = {
-        object: document.createElement('div')
-      }
+      this.location = { object: document.createElement('div') } 
       var html =
       '<div class="data">'
       + '<div class="ip">' + geo.ip + '</div>'
@@ -389,13 +386,13 @@ window.onload = function () {
       this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '') + this.ip + ' <span class="country">' + (geo.country || '??') + '</span>'
 
       this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
-    }
+    } //Marker
 
     Marker.prototype.paint = function () {
       var coords = map.latLongToPx(this.latlon)
       this.object.style.left = coords.x + 'px'
       this.object.style.top = coords.y + 'px'
-    }
+    } // Marker.prototype.paint
 
     Marker.prototype.age = function () {
       var now = Date.now()
@@ -404,7 +401,7 @@ window.onload = function () {
       if (age > config.ttl) map.markers.remove(this)
       else
         this.object.style.opacity = 1 - (age / config.ttl)
-    }
+    } // Marker.prototype.age
 
     map.latLongToPx = function (latlon) {
       var lat = latlon[0]
@@ -425,7 +422,7 @@ window.onload = function () {
         x: x - map.margin + ox
       , y: y - map.margin + oy
       }
-    }
+    } //map.latLongtoPx
 
     function onresize () {
       map.viewport = {
@@ -452,7 +449,7 @@ window.onload = function () {
       map.object.style.top = map.offset.y + 'px'
       map.markers.paint()
       dots.clear()
-    }
+    } //onresize
 
     onresize()
     var resizeTimeout
@@ -464,7 +461,7 @@ window.onload = function () {
     }
 
     return map
-  }
+  } //createMap
 
   regexpInput.onkeyup = function (e) {
     var val = this.value.toString().trim()
@@ -477,7 +474,7 @@ window.onload = function () {
         })
       }
     }
-  }
+  } // regexpInput.onKeyup
 
   matches.regexp = regexpInput.value && new(RegExp(regexpInput.value, 'igm')) || false
 
@@ -485,7 +482,7 @@ window.onload = function () {
     client.remote.on('config', function (cfg) {
       if (cfg.dateNow) cfg.timeDiff = Date.now() - cfg.dateNow
       for (var k in cfg) { config[k] = cfg[k] }
-    })
+    }) 
 
     client.remote.on('geoip', function (geos) {
       var nadd = config.bufferTime / geos.length, n = 0
@@ -498,17 +495,15 @@ window.onload = function () {
             matches.consider(geo)
           }
         }, n += nadd)
-      })
-    })
+      }) 
+    }) // connect
 
-    client.remote.emit('subscribe', 'geoip')
-  })
+    client.remote.emit('subscribe', 'geoip') }) // connect 
 
   ;(function tick () {
     map.markers.age()
-    window.requestAnimFrame(tick)
-  }());
-}
+    window.requestAnimFrame(tick) }());
+} //window.onLoad
 
 window.requestAnimFrame = (function () {
   return window.requestAnimationFrame  
@@ -586,4 +581,4 @@ function levenshtein (s1, s2) {
     v1 = v_tmp;
   }
   return v0[s1_len];
-}
+} //levenshtein
