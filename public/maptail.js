@@ -498,7 +498,7 @@ window.onload = function () {
       }) 
     }) // connect
 
-    client.remote.emit('subscribe', 'geoip') }) // connect 
+   client.remote.emit('subscribe', 'geoip') }) // connect 
 
   ;(function tick () {
     map.markers.age()
