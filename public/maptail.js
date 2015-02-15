@@ -315,7 +315,7 @@ window.onload = function () {
             this.ipList.removeChild(marker.ipList.object)
           } catch (e) {}
         }
-    } destroy:
+    } // destroy:
     , forEach: function (fn) {
         var self = this
         Object.keys(this.list).forEach(function (key) {
@@ -502,8 +502,9 @@ window.onload = function () {
 
   ;(function tick () {
     map.markers.age()
-    window.requestAnimFrame(tick) }());
-} //window.onLoad
+    window.requestAnimFrame(tick)
+  }());
+}
 
 window.requestAnimFrame = (function () {
   return window.requestAnimationFrame  
