@@ -22,7 +22,7 @@ function safe (text) {
     .split('"').join('&quot;')
     .split('<').join('&lt;')
     .split('>').join('&gt;')
-}
+} //safe
 
 function ansiToHtml (text) {
   var colors = {
