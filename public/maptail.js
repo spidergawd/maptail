@@ -89,7 +89,7 @@ window.onload = function () {
   Dot.prototype.draw = function () {
     this.object.style.left = Math.floor(this.x) + 'px'
     this.object.style.top = Math.floor(this.y) + 'px'
-  }
+  } //Dot.prototype.draw
 
   var map = createMap()
   var active = document.getElementById('active-number')
@@ -109,15 +109,17 @@ window.onload = function () {
     } // recalcMaxAge
   , destroySoon: function (key, item) {
       // clears existing timeout and assigns new one
-      // to destroy this item when it ages
+      // to destroy item when it ages
       var self = this
       clearTimeout(item.removeTimeout)        
-      item.removeTimeout = setTimeout(function () {
-        self.object.removeChild(item.object)
-        delete self.list[key]
-        self.length--
-        self.recalcMaxAge()
-      }, Math.pow(self.maxAge, item.hits))
+      item.removeTimeout = setTimeout(
+	  function () {
+              self.object.removeChild(item.object)
+              delete self.list[key]
+              self.length--
+              self.recalcMaxAge()
+	  }, 
+	  Math.pow(self.maxAge, item.hits))
     } //destroySoon
   , consider: function (geo) {
       // evaluates receved event against regular expression
@@ -132,37 +134,38 @@ window.onload = function () {
           || (geo.city && geo.city.match(this.regexp))
           )
         ) {
-        for (var k in this.list) {
-          if (levenshtein(geo.message, k) <= 12) {
-            found = true
-            item = this.list[k]
-            item.inc()
-            item.set(geo)
-            this.destroySoon(k, item)
-            break
-          }
-        }
-        if (!found) {
-          var item = this.list[geo.message] = new HashItem(geo)
-          this.object.appendChild(item.object)
-          this.length++
-          this.recalcMaxAge()
-          this.destroySoon(geo.message, item)
-        }
-      }
+          for (var k in this.list) {
+              if (levenshtein(geo.message, k) <= 12) {
+		  found = true
+		  item = this.list[k]
+		  item.inc()
+		  item.set(geo)
+		  this.destroySoon(k, item)
+		  break
+              } // find
+          } // iterate over list
+          if (!found) {
+              var item = this.list[geo.message] = new HashItem(geo)
+              this.object.appendChild(item.object)
+              this.length++
+              this.recalcMaxAge()
+              this.destroySoon(geo.message, item)
+          } //!found
+      } // if pass regexp
     } //consider
   , clear: function () {
       this.object.innerHTML = ''
       this.list = {}
       this.regexp = false
-    }
-  } // clear
+    } //clear
+  } //var matches
 
   function HashItem (geo) {
     this.object = document.createElement('div')
     this.hits = 1
     this.set(geo)
   } //HashItem
+
   HashItem.prototype.inc = function () {
     this.hits++
   }
