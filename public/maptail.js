@@ -51,9 +51,9 @@ function ansiToHtml (text) {
 window.onload = function () {
   var dots = {
     object: document.getElementById('dots')
-  , add: function (source, target) {
+  , add: function (source) {
       if (this.list.length < this.max) {
-        var dot = new Dot(source, target)
+        var dot = new Dot(source)
         this.object.appendChild(dot.object)
         this.list.push(dot)
       }
@@ -63,18 +63,13 @@ window.onload = function () {
   , tick: function () {
       var self = this
       var list = this.list
-      var toRemove = []
+      //var toRemove = []
       list.forEach(function (dot) {
         dot.draw()
-        if (Math.abs(dot.target.x - dot.x) < 3
-          && Math.abs(dot.target.y - dot.y) < 3) {
-          self.object.removeChild(dot.object)
-          toRemove.push(dot)
-        }
       })
-      toRemove.forEach(function (dot) {
+      /*toRemove.forEach(function (dot) {
         list.splice(list.indexOf(dot), 1)
-      })
+      })*/ 
     } //tick:
   , clear: function () {
       var self = this
@@ -85,12 +80,9 @@ window.onload = function () {
     } //clear
   } //var dots
 
-  function Dot (source, target) {
+  function Dot (source) {
     this.object = document.createElement('div')
     this.object.className = 'dot'
-    this.target = target
-    this.target.x += 3
-    this.target.y += 3
     this.x = source.x
     this.y = source.y
   } //Dot
