@@ -58,7 +58,7 @@ window.onload = function () {
         this.list.push(dot)
       }
     } //add:
-  , max: 500
+  , max: 1000
   , list: []
   , tick: function () {
       var self = this
@@ -492,11 +492,15 @@ window.onload = function () {
           active.textContent = visitors
           if (geo.message) {
             messages.add(geo.message)
-            matches.consider(geo)
+            // evaluate the geo 
+	    matches.consider(geo)
           }
-        }, n += nadd)
-      }) 
-    }) // connect
+        }, //function (geo) 
+       n += nadd) // geos.forEach 
+      } // function (geos)
+      ) // client.remote.on(...) 
+    } // function(client)
+    ) // connect
 
    client.remote.emit('subscribe', 'geoip') }) // connect 
 
