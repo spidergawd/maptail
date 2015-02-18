@@ -478,31 +478,43 @@ window.onload = function () {
 
   matches.regexp = regexpInput.value && new(RegExp(regexpInput.value, 'igm')) || false
 
-  connect(function (client) {  
-    client.remote.on('config', function (cfg) {
-      if (cfg.dateNow) cfg.timeDiff = Date.now() - cfg.dateNow
-      for (var k in cfg) { config[k] = cfg[k] }
-    }) 
-
-    client.remote.on('geoip', function (geos) {
-      var nadd = config.bufferTime / geos.length, n = 0
-      geos.forEach(function (geo) {
-        setTimeout(function () {
-          if (geo.ll) map.placeMarker(geo)
-          active.textContent = visitors
-          if (geo.message) {
-            messages.add(geo.message)
-            // evaluate the geo 
-	    matches.consider(geo)
-          }
-        }, //function (geo) 
-       n += nadd) // geos.forEach 
-      } // function (geos)
-      ) // client.remote.on(...) 
-    } // function(client)
-    ) // connect
-
-   client.remote.emit('subscribe', 'geoip') }) // connect 
+  connect(
+      function (client) {  
+	  client.remote.on('config', 
+			   function (cfg) {
+			       if (cfg.dateNow) {
+				   cfg.timeDiff = Date.now() - cfg.dateNow
+			       }
+			       for (var k in cfg) { 
+				   config[k] = cfg[k] 
+			       }
+			   } // function (cfg)
+			  ) // client.remote.on(...)
+	  client.remote.on('geoip', 
+			   function (geos) {
+			       var nadd = config.bufferTime / geos.length, n = 0
+			       geos.forEach(
+				   function (geo) {
+				       setTimeout(
+					   function () {
+					       if (geo.ll) { 
+						   map.placeMarker(geo)
+					       }
+					       active.textContent = visitors
+					       if (geo.message) {
+						   messages.add(geo.message)
+						   // evaluate the geo 
+						   matches.consider(geo)
+					       }
+					   }, // function()
+					   n += nadd) // setTimeout()
+				   } // function(geo)
+			       ) // geos.forEach
+			   } // function(geos)
+			  ) // client.remote.on (...)
+	  client.remote.emit('subscribe', 'geoip') 
+      } // function(client)
+  ) // connect
 
   ;(function tick () {
     /* ages all the markers and send ticks the animFrame */
