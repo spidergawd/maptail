@@ -103,8 +103,9 @@ window.onload = function () {
   , regexp: false
   , maxAge: 10
   , recalcMaxAge: function () {
-      if (this.length > 7) this.maxAge -= 30
-      if (this.length < 4) this.maxAge += 40
+      // commented out because I don't think I need this
+      //if (this.length > 7) this.maxAge -= 30
+      //if (this.length < 4) this.maxAge += 40
       this.maxAge = Math.max(this.maxAge, 5)
     } // recalcMaxAge
   , destroySoon: function (key, item) {
@@ -353,6 +354,7 @@ window.onload = function () {
         stroke: "#333"
       , 'stroke-width': 1.05 })
 
+    /* Marker displays the context, the locale and activity */
     function Marker (geo) {
       this.ip = geo.ip
       this.latlon = geo.ll
@@ -393,9 +395,12 @@ window.onload = function () {
       var now = Date.now()
       var age = (now - this.date) / 1000
       this.inner.ageNumber.textContent = age.toFixed(1)
-      if (age > config.ttl) map.markers.remove(this)
-      else
-        this.object.style.opacity = 1 - (age / config.ttl)
+      if (age > config.ttl) {
+	  map.markers.remove(this)
+      }
+      else {
+	  this.object.style.opacity = 1 - (age / config.ttl)
+      }
     } // Marker.prototype.age
 
     map.latLongToPx = function (latlon) {
@@ -496,6 +501,7 @@ window.onload = function () {
    client.remote.emit('subscribe', 'geoip') }) // connect 
 
   ;(function tick () {
+    /* ages all the markers and send ticks the animFrame */
     map.markers.age()
     window.requestAnimFrame(tick)
   }());
