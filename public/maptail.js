@@ -250,20 +250,20 @@ window.onload = function () {
 	map.offset = { x: 0, y: 0 }
 	map.margin = 10
 	map.markers = {
-	    object: document.getElementById('markers')
-	    , list: {}
-	    , ipList: document.getElementById('iplist')
-	    , freeze: false
-	    , active: 0
-	    , add: function (marker) {
+	    object: document.getElementById('markers'),
+	    list: {},
+	    ipList: document.getElementById('iplist'),
+	    freeze: false,
+	    active: 0,
+	    add: function (marker) {
 		this.list[marker.ip] = marker
 		if (!this.freeze) {
 		    this.append(marker)
 		} else {
 		    this.freeze.push(marker)
 		}
-	    } //map.markers
-	    , append: function (marker) {
+	    }, // function (marker)
+	    append: function (marker) {
 		var self = this
 		this.active++
 		if (this.active > config.maxDots) {
@@ -295,15 +295,15 @@ window.onload = function () {
 		    marker.object.classList.remove('hovered')
 		    messages.object.onmouseout()
 		}
-	    } // append:
-	    , remove: function (marker) {
+	    }, // append:
+	    remove: function (marker) {
 		if (this.freeze) {
 		    this.freezeRemove.push(marker)
 		} else {
 		    this.destroy(marker)
 		}
-	    } //remove:
-	    , destroy: function (marker) {
+	    }, //remove:
+	    destroy: function (marker) {
 		if (marker.ip in this.list) {
 		    this.active--
 		    if (this.active < config.maxDots) {
@@ -317,21 +317,21 @@ window.onload = function () {
 			this.ipList.removeChild(marker.ipList.object)
 		    } catch (e) {}
 		} // if marker.ip in this.list
-	    } // destroy: marker
-	    , forEach: function (fn) {
+	    }, // destroy: marker
+	    forEach: function (fn) {
 		var self = this
 		Object.keys(this.list).forEach(
 		    function (key) {
 			fn(self.list[key])
 		    })
-	    } // forEach
-	    , paint: function () {
+	    }, // forEach
+	    paint: function () {
 		this.forEach(
 		    function (marker) {
 			marker.paint()
 		    })
-	    } //paint
-	    , age: function () {
+	    }, //paint
+	    age: function () {
 		this.forEach(
 		    function (marker) {
 			marker.age()
