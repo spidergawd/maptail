@@ -17,11 +17,10 @@ function connect (callback) {
 } //connect
 
 function safe (text) {
-  return text
-    .split('&').join('&amp;')
-    .split('"').join('&quot;')
-    .split('<').join('&lt;')
-    .split('>').join('&gt;')
+  return text.split('&').join('&amp;')
+	.split('"').join('&quot;')
+	.split('<').join('&lt;')
+	.split('>').join('&gt;')
 } //safe
 
 function ansiToHtml (text) {
@@ -37,15 +36,16 @@ function ansiToHtml (text) {
   , 38: "#777"
   , 39: "#777"
   }
-  return text.replace(/\033\[(?:(\d+);)?(\d+)m/g, function (m, extra, color) {
-    var style = 'color:' + (colors[color] || '#777')
-    if (extra == 1) {
-      style += ';font-weight=bold'
-    } else if (extra == 4) {
-      style += ';text-decoration=underline'
-    }
-    return '</span><span style="' + style + '">'
-  })
+  return text.replace(/\033\[(?:(\d+);)?(\d+)m/g, 
+		      function (m, extra, color) {
+			  var style = 'color:' + (colors[color] || '#777')
+			  if (extra == 1) {
+			      style += ';font-weight=bold'
+			  } else if (extra == 4) {
+			      style += ';text-decoration=underline'
+			  }
+			  return '</span><span style="' + style + '">'
+		      })
 } //ansiToHtml
 
 window.onload = function () {
@@ -144,7 +144,7 @@ window.onload = function () {
 		  this.destroySoon(k, item)
 		  break
               } // find
-          } // iterate over list
+          } // iterate over this.list
           if (!found) {
               var item = this.list[geo.message] = new HashItem(geo)
               this.object.appendChild(item.object)
@@ -152,7 +152,7 @@ window.onload = function () {
               this.recalcMaxAge()
               this.destroySoon(geo.message, item)
           } //!found
-      } // if pass regexp
+      } // if... passes regexp
     } //consider
   , clear: function () {
       this.object.innerHTML = ''
@@ -165,7 +165,7 @@ window.onload = function () {
     this.object = document.createElement('div')
     this.hits = 1
     this.set(geo)
-  } //HashItem
+  } //HashItem function(geo)
 
   HashItem.prototype.inc = function () {
     this.hits++
@@ -224,14 +224,17 @@ window.onload = function () {
       messages.lastLine = messages.lines[messages.freeze]
     }
   } //messages.object.onmouseover
+
   messages.object.onmouseout = function (e) {
     if (messages.freeze) {
-      messages.mouseoutTimeout = setTimeout(function () {
-        messages.lines
-          .slice(messages.freeze)
-          .forEach(messages.append.bind(messages))
-        messages.freeze = 0
-      }, 1000)
+      messages.mouseoutTimeout = setTimeout(
+	  function () {
+              messages.lines
+		  .slice(messages.freeze)
+		  .forEach(messages.append.bind(messages))
+              messages.freeze = 0
+	  }, 
+	  1000)
     }
   } //messages.object.onmouseout
 
@@ -280,12 +283,14 @@ window.onload = function () {
           messages.object.onmouseover()
         }
         marker.ipList.object.onmouseout = marker.object.onmouseout = function () {
-          self.freezeTimeout = setTimeout(function () {
-            self.freeze.forEach(self.append.bind(self))
-            self.freezeRemove.forEach(self.destroy.bind(self))
-            self.freeze = false
-            self.freezeRemove = false
-          }, 170)
+          self.freezeTimeout = setTimeout(
+	      function () {
+		  self.freeze.forEach(self.append.bind(self))
+		  self.freezeRemove.forEach(self.destroy.bind(self))
+		  self.freeze = false
+		  self.freezeRemove = false
+              }, 
+	      170)
           marker.object.classList.remove('hovered')
           messages.object.onmouseout()
         }
@@ -310,27 +315,27 @@ window.onload = function () {
             this.object.removeChild(marker.object)
             this.ipList.removeChild(marker.ipList.object)
           } catch (e) {}
-        }
-    } // destroy:
+        } // if marker.ip in this.list
+    } // destroy: marker
     , forEach: function (fn) {
         var self = this
         Object.keys(this.list).forEach(
 	    function (key) {
 		fn(self.list[key])
             })
-      }
+      } // forEach
     , paint: function () {
         this.forEach(
 	    function (marker) {
 		marker.paint()
             })
-      }
+      } //paint
     , age: function () {
         this.forEach(
 	    function (marker) {
 		marker.age()
             })
-      }
+      } // age
     } //map.markers
     map.placeMarker = function (geo) {
       var marker
@@ -386,7 +391,7 @@ window.onload = function () {
       this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '') + this.ip + ' <span class="country">' + (geo.country || '??') + '</span>'
 
       this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
-    } //Marker
+    } //Marker (geo)
 
     Marker.prototype.paint = function () {
       var coords = map.latLongToPx(this.latlon)
@@ -458,10 +463,12 @@ window.onload = function () {
     var resizeTimeout
     window.onresize = function () {
       clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(function () {
-        onresize()
-      }, 200)
-    }
+      resizeTimeout = setTimeout(
+	  function () {
+              onresize()
+	  }, 
+	  200)
+    } // onresize
 
     return map
   } //createMap
@@ -519,11 +526,14 @@ window.onload = function () {
       } // function(client)
   ) // connect
 
-  (function tick () {
-      /* ages all the markers and send ticks the animFrame */
-      map.markers.age()
-      window.requestAnimFrame(tick)
-  }());
+  (
+      function tick () {
+	  /* ages all the markers and send ticks the animFrame */
+	  map.markers.age()
+	  window.requestAnimFrame(tick)
+      }
+      () //??
+  );
 } //window.onLoad
 
 window.requestAnimFrame = (
