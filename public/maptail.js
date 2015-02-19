@@ -314,19 +314,22 @@ window.onload = function () {
     } // destroy:
     , forEach: function (fn) {
         var self = this
-        Object.keys(this.list).forEach(function (key) {
-          fn(self.list[key])
-        })
+        Object.keys(this.list).forEach(
+	    function (key) {
+		fn(self.list[key])
+            })
       }
     , paint: function () {
-        this.forEach(function (marker) {
-          marker.paint()
-        })
+        this.forEach(
+	    function (marker) {
+		marker.paint()
+            })
       }
     , age: function () {
-        this.forEach(function (marker) {
-          marker.age()
-        })
+        this.forEach(
+	    function (marker) {
+		marker.age()
+            })
       }
     } //map.markers
     map.placeMarker = function (geo) {
@@ -517,22 +520,24 @@ window.onload = function () {
   ) // connect
 
   (function tick () {
-    /* ages all the markers and send ticks the animFrame */
-    map.markers.age()
-    window.requestAnimFrame(tick)
+      /* ages all the markers and send ticks the animFrame */
+      map.markers.age()
+      window.requestAnimFrame(tick)
   }());
-}
+} //window.onLoad
 
-window.requestAnimFrame = (function () {
-  return window.requestAnimationFrame  
-      || window.webkitRequestAnimationFrame 
-      || window.mozRequestAnimationFrame    
-      || window.oRequestAnimationFrame      
-      || window.msRequestAnimationFrame     
-      || function (callback, el) {
-        return window.setTimeout(callback, 1000 / 60)
-      }
-}());
+window.requestAnimFrame = (
+    function () {
+	return window.requestAnimationFrame  
+	    || window.webkitRequestAnimationFrame 
+	    || window.mozRequestAnimationFrame    
+	    || window.oRequestAnimationFrame      
+	    || window.msRequestAnimationFrame     
+	    || function (callback, el) {
+		return window.setTimeout(callback, 1000 / 60)
+	    }
+    } ()
+); // window.requestAnimFrame
 
 function levenshtein (s1, s2) {
   // http://kevin.vanzonneveld.net
