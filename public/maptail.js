@@ -516,7 +516,7 @@ window.onload = function () {
       } // function(client)
   ) // connect
 
-  ;(function tick () {
+  (function tick () {
     /* ages all the markers and send ticks the animFrame */
     map.markers.age()
     window.requestAnimFrame(tick)
