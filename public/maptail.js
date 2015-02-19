@@ -49,132 +49,133 @@ function ansiToHtml (text) {
 } //ansiToHtml
 
 window.onload = function () {
-  var dots = {
-    object: document.getElementById('dots')
-  , add: function (source) {
-      if (this.list.length < this.max) {
-        var dot = new Dot(source)
-        this.object.appendChild(dot.object)
-        this.list.push(dot)
-      }
-    } //add:
-  , max: 1000
-  , list: []
-  , tick: function () {
-      var self = this
-      var list = this.list
-      //var toRemove = []
-      list.forEach(function (dot) {
-        dot.draw()
-      })
-      /*toRemove.forEach(function (dot) {
-        list.splice(list.indexOf(dot), 1)
-      })*/ 
-    } //tick:
-  , clear: function () {
-      var self = this
-      this.list.forEach(function (dot) {
-        self.object.removeChild(dot.object)
-      })
-      this.list = []
-    } //clear
-  } //var dots
+    var dots = {
+	object: document.getElementById('dots'),
+	add: function (source) {
+	    if (this.list.length < this.max) {
+		var dot = new Dot(source)
+		this.object.appendChild(dot.object)
+		this.list.push(dot)
+	    }
+	}, //add:
+	max: 1000,
+	list: [],
+	tick: function () {
+	    var self = this
+	    var list = this.list
+	    //var toRemove = []
+	    // draw each in the list
+	    list.forEach(
+		function (dot) {
+		    dot.draw()
+		})
+	    /*toRemove.forEach(function (dot) {
+              list.splice(list.indexOf(dot), 1)
+	      })*/ 
+	}, //tick:
+	clear: function () {
+	    var self = this
+	    this.list.forEach(function (dot) {
+		self.object.removeChild(dot.object)
+	    })
+	    this.list = []
+	} //clear
+    } //var dots
 
-  function Dot (source) {
-    this.object = document.createElement('div')
-    this.object.className = 'dot'
-    this.x = source.x
-    this.y = source.y
-  } //Dot
-  Dot.prototype.draw = function () {
-    this.object.style.left = Math.floor(this.x) + 'px'
-    this.object.style.top = Math.floor(this.y) + 'px'
-  } //Dot.prototype.draw
+    function Dot (source) {
+	this.object = document.createElement('div')
+	this.object.className = 'dot'
+	this.x = source.x
+	this.y = source.y
+    } //Dot
+    
+    Dot.prototype.draw = function () {
+	this.object.style.left = Math.floor(this.x) + 'px'
+	this.object.style.top = Math.floor(this.y) + 'px'
+    } //Dot.prototype.draw
 
-  var map = createMap()
-  var active = document.getElementById('active-number')
-  var regexpInput = document.getElementById('regexp')
+    var map = createMap()
+    var active = document.getElementById('active-number')
+    var regexpInput = document.getElementById('regexp')
 
-  // current events with geo match
-  var matches = {
-    object: document.getElementById('matches')
-  , list: {}
-  , length: 0
-  , regexp: false
-  , maxAge: 10
-  , recalcMaxAge: function () {
-      // commented out because I don't think I need this
-      //if (this.length > 7) this.maxAge -= 30
-      //if (this.length < 4) this.maxAge += 40
-      this.maxAge = Math.max(this.maxAge, 5)
-    } // recalcMaxAge
-  , destroySoon: function (key, item) {
-      // clears existing timeout and assigns new one
-      // to destroy item when it ages
-      var self = this
-      clearTimeout(item.removeTimeout)        
-      item.removeTimeout = setTimeout(
-	  function () {
-              self.object.removeChild(item.object)
-              delete self.list[key]
-              self.length--
-              self.recalcMaxAge()
-	  }, 
-	  Math.pow(self.maxAge, item.hits))
-    } //destroySoon
-  , consider: function (geo) {
-      // evaluates receved event against regular expression
-      // conditionally adds to list and
-      // (re)sets timer via destroySoon 
-      var self = this
-      var list = this.list
-      var found = false, item
-      if (geo.message && (
-          (geo.message.match(this.regexp))
-          || (geo.country && geo.country.match(this.regexp))
-          || (geo.city && geo.city.match(this.regexp))
-          )
-        ) {
-          for (var k in this.list) {
-              if (levenshtein(geo.message, k) <= 12) {
-		  found = true
-		  item = this.list[k]
-		  item.inc()
-		  item.set(geo)
-		  this.destroySoon(k, item)
-		  break
-              } // find
-          } // iterate over this.list
-          if (!found) {
-              var item = this.list[geo.message] = new HashItem(geo)
-              this.object.appendChild(item.object)
-              this.length++
-              this.recalcMaxAge()
-              this.destroySoon(geo.message, item)
-          } //!found
-      } // if... passes regexp
-    } //consider
-  , clear: function () {
-      this.object.innerHTML = ''
-      this.list = {}
-      this.regexp = false
-    } //clear
-  } //var matches
+    // current events with geo match
+    var matches = {
+	object: document.getElementById('matches'),
+	list: {},
+	length: 0,
+	regexp: false,
+	maxAge: 10,
+	recalcMaxAge: function () {
+	    // commented out because I don't think I need this
+	    //if (this.length > 7) this.maxAge -= 30
+	    //if (this.length < 4) this.maxAge += 40
+	    this.maxAge = Math.max(this.maxAge, 5)
+	}, // recalcMaxAge
+	destroySoon: function (key, item) {
+	    // clears existing timeout and assigns new one
+	    // to destroy item when it ages
+	    var self = this
+	    clearTimeout(item.removeTimeout)        
+	    item.removeTimeout = setTimeout(
+		function () {
+		    self.object.removeChild(item.object)
+		    delete self.list[key]
+		    self.length--
+		    self.recalcMaxAge()
+		}, 
+		Math.pow(self.maxAge, item.hits))
+	}, //destroySoon
+	consider: function (geo) {
+	    // evaluates receved event against regular expression
+	    // conditionally adds to list and
+	    // (re)sets timer via destroySoon 
+	    var self = this
+	    var list = this.list
+	    var found = false, item
+	    if (geo.message && 
+		( (geo.message.match(this.regexp)) || 
+		  (geo.country && geo.country.match(this.regexp)) || 
+		  (geo.city && geo.city.match(this.regexp)) ) ) {
+		for (var k in this.list) {
+		    if (levenshtein(geo.message, k) <= 12) {
+			found = true
+			item = this.list[k]
+			item.inc()
+			item.set(geo)
+			this.destroySoon(k, item)
+			break
+		    } // find
+		} // iterate over this.list
+		if (!found) {
+		    var item = this.list[geo.message] = new HashItem(geo)
+		    this.object.appendChild(item.object)
+		    this.length++
+		    this.recalcMaxAge()
+		    this.destroySoon(geo.message, item)
+		} //!found
+	    } // if... passes regexp
+	}, //consider
+	clear: function () {
+	    this.object.innerHTML = ''
+	    this.list = {}
+	    this.regexp = false
+	} //clear
+    } //var matches
 
-  function HashItem (geo) {
-    this.object = document.createElement('div')
-    this.hits = 1
-    this.set(geo)
-  } //HashItem function(geo)
+    function HashItem (geo) {
+	this.object = document.createElement('div')
+	this.hits = 1
+	this.set(geo)
+    } //HashItem function(geo)
 
-  HashItem.prototype.inc = function () {
-    this.hits++
-  }
-  HashItem.prototype.set = function (geo) {
-    this.object.innerHTML = ansiToHtml(safe(geo.message))
-    this.country = geo.country
-    this.city = geo.city
-  }
+    HashItem.prototype.inc = function () {
+	this.hits++
+    }
+    HashItem.prototype.set = function (geo) {
+	this.object.innerHTML = ansiToHtml(safe(geo.message))
+	this.country = geo.country
+	this.city = geo.city
+    }
 
   /*
   // calibration markers
@@ -189,351 +190,351 @@ window.onload = function () {
   map.placeMarker({ ip: '123.123.123.6', date: Date.now(), ll: [ 57.326521,-153.984375 ]})
   */
 
-  var messages = {
-    object: document.getElementById('messages')
-  , lines: []
-  , freeze: 0
-  , add: function (message) {
-      var line = new LineItem(message)
-      this.lines.push(line)
-      if (!this.freeze) {
-        this.append(line)
-      }
-    } // add:
-  , append: function (line) {
-      this.object.appendChild(line.object)
-      if (this.lines.length > 12) {
-        this.object.removeChild(this.lines.shift().object)
-      }
-      this.lines.forEach(function (line, index) {
-        line.object.style.opacity = (1.0 / 12) * index
-      })
-    } //append:
-  } //var messages
+    var messages = {
+	object: document.getElementById('messages'),
+	lines: [],
+	freeze: 0,
+	add: function (message) {
+	    var line = new LineItem(message)
+	    this.lines.push(line)
+	    if (!this.freeze) {
+		this.append(line)
+	    }
+	}, // add:
+	append: function (line) {
+	    this.object.appendChild(line.object)
+	    if (this.lines.length > 12) {
+		this.object.removeChild(this.lines.shift().object)
+	    }
+	    this.lines.forEach(function (line, index) {
+		line.object.style.opacity = (1.0 / 12) * index
+	    })
+	}, //append:
+    } //var messages
 
-  function LineItem (message) {
-    this.message = message
-    this.object = document.createElement('div')
-    this.object.innerHTML = ansiToHtml(safe(message))
-  } // LineItem
+    function LineItem (message) {
+	this.message = message
+	this.object = document.createElement('div')
+	this.object.innerHTML = ansiToHtml(safe(message))
+    } // LineItem
 
-  messages.object.onmouseover = function (e) {
-    clearTimeout(messages.mouseoutTimeout)
-    if (!messages.freeze) {
-      messages.freeze = messages.lines.length - 1
-      messages.lastLine = messages.lines[messages.freeze]
-    }
-  } //messages.object.onmouseover
+    messages.object.onmouseover = function (e) {
+	clearTimeout(messages.mouseoutTimeout)
+	if (!messages.freeze) {
+	    messages.freeze = messages.lines.length - 1
+	    messages.lastLine = messages.lines[messages.freeze]
+	}
+    } //messages.object.onmouseover
 
-  messages.object.onmouseout = function (e) {
-    if (messages.freeze) {
-      messages.mouseoutTimeout = setTimeout(
-	  function () {
-              messages.lines
-		  .slice(messages.freeze)
-		  .forEach(messages.append.bind(messages))
-              messages.freeze = 0
-	  }, 
-	  1000)
-    }
-  } //messages.object.onmouseout
+    messages.object.onmouseout = function (e) {
+	if (messages.freeze) {
+	    messages.mouseoutTimeout = setTimeout(
+		function () {
+		    messages.lines
+			.slice(messages.freeze)
+			.forEach(messages.append.bind(messages))
+		    messages.freeze = 0
+		}, 
+		1000)
+	}
+    } //messages.object.onmouseout
 
-  function createMap () {
-    var map = {}
-    map.object = document.getElementById('map')
-    map.size = {
-      width: 0
-    , height: 0
-    , original: { width: 554, height: 359 }
-    }
-    map.offset = { x: 0, y: 0 }
-    map.margin = 10
-    map.markers = {
-      object: document.getElementById('markers')
-    , list: {}
-    , ipList: document.getElementById('iplist')
-    , freeze: false
-    , active: 0
-    , add: function (marker) {
-        this.list[marker.ip] = marker
-        if (!this.freeze) {
-          this.append(marker)
-        } else {
-          this.freeze.push(marker)
-        }
-      } //map.markers
-    , append: function (marker) {
-        var self = this
-        this.active++
-        if (this.active > config.maxDots) {
-          config.originalttl = config.originalttl || config.ttl
-          config.ttl -= 1
-          config.ttl = Math.max(config.ttl, 1)
-        }      
-        this.object.appendChild(marker.object)
-        this.ipList.appendChild(marker.ipList.object)
-        this.ipList.insertBefore(
-          marker.ipList.object, this.ipList.firstChild
-        )
-        marker.ipList.object.onmouseover = marker.object.onmouseover = function () {
-          clearTimeout(self.freezeTimeout)
-          self.freeze = self.freeze || []
-          self.freezeRemove = self.freezeRemove || []
-          marker.object.classList.add('hovered')
-          messages.object.onmouseover()
-        }
-        marker.ipList.object.onmouseout = marker.object.onmouseout = function () {
-          self.freezeTimeout = setTimeout(
-	      function () {
-		  self.freeze.forEach(self.append.bind(self))
-		  self.freezeRemove.forEach(self.destroy.bind(self))
-		  self.freeze = false
-		  self.freezeRemove = false
-              }, 
-	      170)
-          marker.object.classList.remove('hovered')
-          messages.object.onmouseout()
-        }
-      } // append:
-    , remove: function (marker) {
-        if (this.freeze) {
-          this.freezeRemove.push(marker)
-        } else {
-          this.destroy(marker)
-        }
-      } //remove:
-    , destroy: function (marker) {
-        if (marker.ip in this.list) {
-          this.active--
-          if (this.active < config.maxDots) {
-            config.originalttl = config.originalttl || config.ttl
-            config.ttl += 1
-            config.ttl = Math.min(config.originalttl * 2, config.ttl)
-          }
-          try {
-            delete this.list[marker.ip]
-            this.object.removeChild(marker.object)
-            this.ipList.removeChild(marker.ipList.object)
-          } catch (e) {}
-        } // if marker.ip in this.list
-    } // destroy: marker
-    , forEach: function (fn) {
-        var self = this
-        Object.keys(this.list).forEach(
-	    function (key) {
-		fn(self.list[key])
-            })
-      } // forEach
-    , paint: function () {
-        this.forEach(
-	    function (marker) {
+    function createMap () {
+	var map = {}
+	map.object = document.getElementById('map')
+	map.size = {
+	    width: 0,
+	    height: 0,
+	    original: { width: 554, height: 359 }
+	}
+	map.offset = { x: 0, y: 0 }
+	map.margin = 10
+	map.markers = {
+	    object: document.getElementById('markers')
+	    , list: {}
+	    , ipList: document.getElementById('iplist')
+	    , freeze: false
+	    , active: 0
+	    , add: function (marker) {
+		this.list[marker.ip] = marker
+		if (!this.freeze) {
+		    this.append(marker)
+		} else {
+		    this.freeze.push(marker)
+		}
+	    } //map.markers
+	    , append: function (marker) {
+		var self = this
+		this.active++
+		if (this.active > config.maxDots) {
+		    config.originalttl = config.originalttl || config.ttl
+		    config.ttl -= 1
+		    config.ttl = Math.max(config.ttl, 1)
+		}      
+		this.object.appendChild(marker.object)
+		this.ipList.appendChild(marker.ipList.object)
+		this.ipList.insertBefore(
+		    marker.ipList.object, this.ipList.firstChild
+		)
+		marker.ipList.object.onmouseover = marker.object.onmouseover = function () {
+		    clearTimeout(self.freezeTimeout)
+		    self.freeze = self.freeze || []
+		    self.freezeRemove = self.freezeRemove || []
+		    marker.object.classList.add('hovered')
+		    messages.object.onmouseover()
+		}
+		marker.ipList.object.onmouseout = marker.object.onmouseout = function () {
+		    self.freezeTimeout = setTimeout(
+			function () {
+			    self.freeze.forEach(self.append.bind(self))
+			    self.freezeRemove.forEach(self.destroy.bind(self))
+			    self.freeze = false
+			    self.freezeRemove = false
+			}, 
+			170)
+		    marker.object.classList.remove('hovered')
+		    messages.object.onmouseout()
+		}
+	    } // append:
+	    , remove: function (marker) {
+		if (this.freeze) {
+		    this.freezeRemove.push(marker)
+		} else {
+		    this.destroy(marker)
+		}
+	    } //remove:
+	    , destroy: function (marker) {
+		if (marker.ip in this.list) {
+		    this.active--
+		    if (this.active < config.maxDots) {
+			config.originalttl = config.originalttl || config.ttl
+			config.ttl += 1
+			config.ttl = Math.min(config.originalttl * 2, config.ttl)
+		    }
+		    try {
+			delete this.list[marker.ip]
+			this.object.removeChild(marker.object)
+			this.ipList.removeChild(marker.ipList.object)
+		    } catch (e) {}
+		} // if marker.ip in this.list
+	    } // destroy: marker
+	    , forEach: function (fn) {
+		var self = this
+		Object.keys(this.list).forEach(
+		    function (key) {
+			fn(self.list[key])
+		    })
+	    } // forEach
+	    , paint: function () {
+		this.forEach(
+		    function (marker) {
+			marker.paint()
+		    })
+	    } //paint
+	    , age: function () {
+		this.forEach(
+		    function (marker) {
+			marker.age()
+		    })
+	    } // age
+	} //map.markers
+	map.placeMarker = function (geo) {
+	    var marker
+	    geo.date += config.timeDiff
+	    if (!(geo.ip in this.markers.list)) {
+		visitorsInc()
+		marker = new Marker(geo)
 		marker.paint()
-            })
-      } //paint
-    , age: function () {
-        this.forEach(
-	    function (marker) {
-		marker.age()
-            })
-      } // age
-    } //map.markers
-    map.placeMarker = function (geo) {
-      var marker
-      geo.date += config.timeDiff
-      if (!(geo.ip in this.markers.list)) {
-        visitorsInc()
-        marker = new Marker(geo)
-        marker.paint()
-        this.markers.add(marker)
-      } else {
-        marker = this.markers.list[geo.ip]
-        clearTimeout(marker.visitorTimeout)
-        marker.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
-        marker.date = geo.date
-      }
-    } //map.placeMarker
-    map.object.style.position = 'absolute'
-    map.object.style.margin = map.margin + 'px'
+		this.markers.add(marker)
+	    } else {
+		marker = this.markers.list[geo.ip]
+		clearTimeout(marker.visitorTimeout)
+		marker.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
+		marker.date = geo.date
+	    }
+	} //map.placeMarker
+	map.object.style.position = 'absolute'
+	map.object.style.margin = map.margin + 'px'
 
-    map.paper = Raphael(map.object)
-    map.paper
-      .path(mapVector)
-      .attr({
-        stroke: "#333"
-      , 'stroke-width': 1.05 })
+	map.paper = Raphael(map.object)
+	map.paper
+	    .path(mapVector)
+	    .attr({
+		stroke: "#333"
+		, 'stroke-width': 1.05 })
 
-    /* Marker displays the context, the locale and activity */
-    function Marker (geo) {
-      this.ip = geo.ip
-      this.latlon = geo.ll
-      this.date = geo.date
-      
-      this.object = document.createElement('div')
-      this.object.className = 'marker'
-      this.location = { object: document.createElement('div') } 
-      var html =
-      '<div class="data">'
-      + '<div class="ip">' + geo.ip + '</div>'
-      + '<div class="location">'
-      + (geo.city ? geo.city + ', ' : '') + (geo.country ? geo.country : 'unknown')
-      + '</div>'
-      + '<div class="age">active <span class="age-number">23.1</span>s ago</div>'
-      + '</div>'
-      this.object.innerHTML = html
-      this.inner = {}
-      this.inner.ageNumber = this.object.getElementsByClassName('age-number')[0]
-      this.inner.ageNumber.textContent = '0.0'
+	/* Marker displays the context, the locale and activity */
+	function Marker (geo) {
+	    this.ip = geo.ip
+	    this.latlon = geo.ll
+	    this.date = geo.date
+	    
+	    this.object = document.createElement('div')
+	    this.object.className = 'marker'
+	    this.location = { object: document.createElement('div') } 
+	    var html =
+		'<div class="data">'
+		+ '<div class="ip">' + geo.ip + '</div>'
+		+ '<div class="location">'
+		+ (geo.city ? geo.city + ', ' : '') + (geo.country ? geo.country : 'unknown')
+		+ '</div>'
+		+ '<div class="age">active <span class="age-number">23.1</span>s ago</div>'
+		+ '</div>'
+	    this.object.innerHTML = html
+	    this.inner = {}
+	    this.inner.ageNumber = this.object.getElementsByClassName('age-number')[0]
+	    this.inner.ageNumber.textContent = '0.0'
 
-      this.ipList = {
-        object: document.createElement('div')
-      }
-      this.ipList.object.className = 'ip'
-      this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '') + this.ip + ' <span class="country">' + (geo.country || '??') + '</span>'
+	    this.ipList = {
+		object: document.createElement('div')
+	    }
+	    this.ipList.object.className = 'ip'
+	    this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '') + this.ip + ' <span class="country">' + (geo.country || '??') + '</span>'
 
-      this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
-    } //Marker (geo)
+	    this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
+	} //Marker (geo)
 
-    Marker.prototype.paint = function () {
-      var coords = map.latLongToPx(this.latlon)
-      this.object.style.left = coords.x + 'px'
-      this.object.style.top = coords.y + 'px'
-    } // Marker.prototype.paint
+	Marker.prototype.paint = function () {
+	    var coords = map.latLongToPx(this.latlon)
+	    this.object.style.left = coords.x + 'px'
+	    this.object.style.top = coords.y + 'px'
+	} // Marker.prototype.paint
 
-    Marker.prototype.age = function () {
-      var now = Date.now()
-      var age = (now - this.date) / 1000
-      this.inner.ageNumber.textContent = age.toFixed(1)
-      if (age > config.ttl) {
-	  map.markers.remove(this)
-      }
-      else {
-	  this.object.style.opacity = 1 - (age / config.ttl)
-      }
-    } // Marker.prototype.age
+	Marker.prototype.age = function () {
+	    var now = Date.now()
+	    var age = (now - this.date) / 1000
+	    this.inner.ageNumber.textContent = age.toFixed(1)
+	    if (age > config.ttl) {
+		map.markers.remove(this)
+	    }
+	    else {
+		this.object.style.opacity = 1 - (age / config.ttl)
+	    }
+	} // Marker.prototype.age
 
-    map.latLongToPx = function (latlon) {
-      var lat = latlon[0]
-      var lon = latlon[1]
-      var x, y
-      var w = map.size.width
-      var h = map.size.height
-      var ox = -(w * 0.0245)
-      var oy = (h * 0.218)
+	map.latLongToPx = function (latlon) {
+	    var lat = latlon[0]
+	    var lon = latlon[1]
+	    var x, y
+	    var w = map.size.width
+	    var h = map.size.height
+	    var ox = -(w * 0.0245)
+	    var oy = (h * 0.218)
 
-      x = (w * (180 + lon) / 360) % w
+	    x = (w * (180 + lon) / 360) % w
 
-      lat = lat * Math.PI / 180
-      y = Math.log(Math.tan((lat / 2) + (Math.PI / 4)))
-      y = (h / 2) - (w * y / (2 * Math.PI))
+	    lat = lat * Math.PI / 180
+	    y = Math.log(Math.tan((lat / 2) + (Math.PI / 4)))
+	    y = (h / 2) - (w * y / (2 * Math.PI))
 
-      return {
-        x: x - map.margin + ox
-      , y: y - map.margin + oy
-      }
-    } //map.latLongtoPx
+	    return {
+		x: x - map.margin + ox
+		, y: y - map.margin + oy
+	    }
+	} //map.latLongtoPx
 
-    function onresize () {
-      map.viewport = {
-        width: window.innerWidth - (map.margin * 2)
-      , height: window.innerHeight - (map.margin * 2)
-      }
-      map.paper.setSize(map.viewport.width, map.viewport.height)
-      map.paper.canvas.style.height = map.viewport.height
-      map.paper.setViewBox(0, 0, map.size.original.width, map.size.original.height)
-      var ratio = map.size.original.width / map.size.original.height
-      var newRatio = map.viewport.width / map.viewport.height
-      if (ratio > newRatio) {
-        map.size.width = map.viewport.width
-        map.size.height = map.viewport.width / ratio
-        map.offset.x = 0
-        map.offset.y = (map.viewport.height - map.size.height) / 2
-      } else {
-        map.size.height = map.viewport.height
-        map.size.width = map.viewport.height * ratio
-        map.offset.y = 0
-        map.offset.x = (map.viewport.width - map.size.width) / 2
-      }
-      map.object.style.left = map.offset.x + 'px'
-      map.object.style.top = map.offset.y + 'px'
-      map.markers.paint()
-      dots.clear()
-    } //onresize
+	function onresize () {
+	    map.viewport = {
+		width: window.innerWidth - (map.margin * 2)
+		, height: window.innerHeight - (map.margin * 2)
+	    }
+	    map.paper.setSize(map.viewport.width, map.viewport.height)
+	    map.paper.canvas.style.height = map.viewport.height
+	    map.paper.setViewBox(0, 0, map.size.original.width, map.size.original.height)
+	    var ratio = map.size.original.width / map.size.original.height
+	    var newRatio = map.viewport.width / map.viewport.height
+	    if (ratio > newRatio) {
+		map.size.width = map.viewport.width
+		map.size.height = map.viewport.width / ratio
+		map.offset.x = 0
+		map.offset.y = (map.viewport.height - map.size.height) / 2
+	    } else {
+		map.size.height = map.viewport.height
+		map.size.width = map.viewport.height * ratio
+		map.offset.y = 0
+		map.offset.x = (map.viewport.width - map.size.width) / 2
+	    }
+	    map.object.style.left = map.offset.x + 'px'
+	    map.object.style.top = map.offset.y + 'px'
+	    map.markers.paint()
+	    dots.clear()
+	} //onresize
 
-    onresize()
-    var resizeTimeout
-    window.onresize = function () {
-      clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(
-	  function () {
-              onresize()
-	  }, 
-	  200)
-    } // onresize
+	onresize()
+	var resizeTimeout
+	window.onresize = function () {
+	    clearTimeout(resizeTimeout)
+	    resizeTimeout = setTimeout(
+		function () {
+		    onresize()
+		}, 
+		200)
+	} // onresize
 
-    return map
-  } //createMap
+	return map
+    } //createMap
 
-  regexpInput.onkeyup = function (e) {
-    var val = this.value.toString().trim()
-    if (e.which == 13) {
-      matches.clear()
-      if (val.length) {
-        matches.regexp = new RegExp(val, 'igm')
-        messages.lines.forEach(function (line) {
-          matches.consider(line.message)
-        })
-      }
-    }
-  } // regexpInput.onKeyup
+    regexpInput.onkeyup = function (e) {
+	var val = this.value.toString().trim()
+	if (e.which == 13) {
+	    matches.clear()
+	    if (val.length) {
+		matches.regexp = new RegExp(val, 'igm')
+		messages.lines.forEach(function (line) {
+		    matches.consider(line.message)
+		})
+	    }
+	}
+    } // regexpInput.onKeyup
 
-  matches.regexp = regexpInput.value && new(RegExp(regexpInput.value, 'igm')) || false
+    matches.regexp = regexpInput.value && new(RegExp(regexpInput.value, 'igm')) || false
 
-  connect(
-      function (client) {  
-	  client.remote.on('config', 
-			   function (cfg) {
-			       if (cfg.dateNow) {
-				   cfg.timeDiff = Date.now() - cfg.dateNow
-			       }
-			       for (var k in cfg) { 
-				   config[k] = cfg[k] 
-			       }
-			   } // function (cfg)
-			  ) // client.remote.on(...)
-	  client.remote.on('geoip', 
-			   function (geos) {
-			       var nadd = config.bufferTime / geos.length, n = 0
-			       geos.forEach(
-				   function (geo) {
-				       setTimeout(
-					   function () {
-					       if (geo.ll) { 
-						   map.placeMarker(geo)
-					       }
-					       active.textContent = visitors
-					       if (geo.message) {
-						   messages.add(geo.message)
-						   // evaluate the geo 
-						   matches.consider(geo)
-					       }
-					   }, // function()
-					   n += nadd) // setTimeout()
-				   } // function(geo)
-			       ) // geos.forEach
-			   } // function(geos)
-			  ) // client.remote.on (...)
-	  client.remote.emit('subscribe', 'geoip') 
-      } // function(client)
-  ) // connect
+    connect(
+	function (client) {  
+	    client.remote.on('config', 
+			     function (cfg) {
+				 if (cfg.dateNow) {
+				     cfg.timeDiff = Date.now() - cfg.dateNow
+				 }
+				 for (var k in cfg) { 
+				     config[k] = cfg[k] 
+				 }
+			     } // function (cfg)
+			    ) // client.remote.on(...)
+	    client.remote.on('geoip', 
+			     function (geos) {
+				 var nadd = config.bufferTime / geos.length, n = 0
+				 geos.forEach(
+				     function (geo) {
+					 setTimeout(
+					     function () {
+						 if (geo.ll) { 
+						     map.placeMarker(geo)
+						 }
+						 active.textContent = visitors
+						 if (geo.message) {
+						     messages.add(geo.message)
+						     // evaluate the geo 
+						     matches.consider(geo)
+						 }
+					     }, // function()
+					     n += nadd) // setTimeout()
+				     } // function(geo)
+				 ) // geos.forEach
+			     } // function(geos)
+			    ) // client.remote.on (...)
+	    client.remote.emit('subscribe', 'geoip') 
+	} // function(client)
+    ) // connect
 
-  (
-      function tick () {
-	  /* ages all the markers and send ticks the animFrame */
-	  map.markers.age()
-	  window.requestAnimFrame(tick)
-      }
-      () //??
-  );
+    (
+	function tick () {
+	    /* ages all the markers and send ticks the animFrame */
+	    map.markers.age()
+	    window.requestAnimFrame(tick)
+	}
+	() //??
+    );
 } //window.onLoad
 
 window.requestAnimFrame = (
@@ -550,68 +551,68 @@ window.requestAnimFrame = (
 ); // window.requestAnimFrame
 
 function levenshtein (s1, s2) {
-  // http://kevin.vanzonneveld.net
-  // +            original by: Carlos R. L. Rodrigues (http://www.jsfromhell.com)
-  // +            bugfixed by: Onno Marsman
-  // +             revised by: Andrea Giammarchi (http://webreflection.blogspot.com)
-  // + reimplemented by: Brett Zamir (http://brett-zamir.me)
-  // + reimplemented by: Alexander M Beedie
-  // *                example 1: levenshtein('Kevin van Zonneveld', 'Kevin van Sommeveld');
-  // *                returns 1: 3
+    // http://kevin.vanzonneveld.net
+    // +            original by: Carlos R. L. Rodrigues (http://www.jsfromhell.com)
+    // +            bugfixed by: Onno Marsman
+    // +             revised by: Andrea Giammarchi (http://webreflection.blogspot.com)
+    // + reimplemented by: Brett Zamir (http://brett-zamir.me)
+    // + reimplemented by: Alexander M Beedie
+    // *                example 1: levenshtein('Kevin van Zonneveld', 'Kevin van Sommeveld');
+    // *                returns 1: 3
 
-  if (s1 == s2) {
-    return 0;
-  }
-
-  var s1_len = s1.length;
-  var s2_len = s2.length;
-  if (s1_len === 0) {
-    return s2_len;
-  }
-  if (s2_len === 0) {
-    return s1_len;
-  }
-
-  // BEGIN STATIC
-  var split = false;
-  try{
-    split=!('0')[0];
-  } catch (e){
-    split=true; // Earlier IE may not support access by string index
-  }
-  // END STATIC
-  if (split){
-    s1 = s1.split('');
-    s2 = s2.split('');
-  }
-
-  var v0 = new Array(s1_len+1);
-  var v1 = new Array(s1_len+1);
-
-  var s1_idx=0, s2_idx=0, cost=0;
-  for (s1_idx=0; s1_idx<s1_len+1; s1_idx++) {
-    v0[s1_idx] = s1_idx;
-  }
-  var char_s1='', char_s2='';
-  for (s2_idx=1; s2_idx<=s2_len; s2_idx++) {
-    v1[0] = s2_idx;
-    char_s2 = s2[s2_idx - 1];
-
-    for (s1_idx=0; s1_idx<s1_len;s1_idx++) {
-      char_s1 = s1[s1_idx];
-      cost = (char_s1 == char_s2) ? 0 : 1;
-      var m_min = v0[s1_idx+1] + 1;
-      var b = v1[s1_idx] + 1;
-      var c = v0[s1_idx] + cost;
-      if (b < m_min) {
-        m_min = b; }
-      if (c < m_min) {
-        m_min = c; }
-      v1[s1_idx+1] = m_min;
+    if (s1 == s2) {
+	return 0;
     }
-    var v_tmp = v0;
-    v0 = v1;
-    v1 = v_tmp;
-  }
-  return v0[s1_len];
+
+    var s1_len = s1.length;
+    var s2_len = s2.length;
+    if (s1_len === 0) {
+	return s2_len;
+    }
+    if (s2_len === 0) {
+	return s1_len;
+    }
+
+    // BEGIN STATIC
+    var split = false;
+    try{
+	split=!('0')[0];
+    } catch (e){
+	split=true; // Earlier IE may not support access by string index
+    }
+    // END STATIC
+    if (split){
+	s1 = s1.split('');
+	s2 = s2.split('');
+    }
+
+    var v0 = new Array(s1_len+1);
+    var v1 = new Array(s1_len+1);
+
+    var s1_idx=0, s2_idx=0, cost=0;
+    for (s1_idx=0; s1_idx<s1_len+1; s1_idx++) {
+	v0[s1_idx] = s1_idx;
+    }
+    var char_s1='', char_s2='';
+    for (s2_idx=1; s2_idx<=s2_len; s2_idx++) {
+	v1[0] = s2_idx;
+	char_s2 = s2[s2_idx - 1];
+
+	for (s1_idx=0; s1_idx<s1_len;s1_idx++) {
+	    char_s1 = s1[s1_idx];
+	    cost = (char_s1 == char_s2) ? 0 : 1;
+	    var m_min = v0[s1_idx+1] + 1;
+	    var b = v1[s1_idx] + 1;
+	    var c = v0[s1_idx] + cost;
+	    if (b < m_min) {
+		m_min = b; }
+	    if (c < m_min) {
+		m_min = c; }
+	    v1[s1_idx+1] = m_min;
+	}
+	var v_tmp = v0;
+	v0 = v1;
+	v1 = v_tmp;
+    }
+    return v0[s1_len];
 } //levenshtein
