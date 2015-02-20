@@ -49,7 +49,7 @@ function ansiToHtml (text) {
 } //ansiToHtml
 
 window.onload = function () {
-    var dots = {
+/*    var dots = {
 	object: document.getElementById('dots'),
 	add: function (source) {
 	    if (this.list.length < this.max) {
@@ -72,6 +72,7 @@ window.onload = function () {
 	    /*toRemove.forEach(function (dot) {
               list.splice(list.indexOf(dot), 1)
 	      })*/ 
+/*
 	}, //tick:
 	clear: function () {
 	    var self = this
@@ -93,7 +94,7 @@ window.onload = function () {
 	this.object.style.left = Math.floor(this.x) + 'px'
 	this.object.style.top = Math.floor(this.y) + 'px'
     } //Dot.prototype.draw
-
+*/
     var map = createMap()
     var active = document.getElementById('active-number')
     var regexpInput = document.getElementById('regexp')
@@ -457,7 +458,7 @@ window.onload = function () {
 	    map.object.style.left = map.offset.x + 'px'
 	    map.object.style.top = map.offset.y + 'px'
 	    map.markers.paint()
-	    dots.clear()
+	    //dots.clear()
 	} //onresize
 
 	onresize()
