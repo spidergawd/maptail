@@ -177,18 +177,18 @@ window.onload = function () {
 	this.city = geo.city
     }
 
-  /*
-  // calibration markers
-  // they should land on islands
-  //
+    /*
+    // calibration markers
+    // they should land on islands
+    //
 
-  map.placeMarker({ ip: '123.123.123.1', date: Date.now(), ll: [ 35.325, 25.1306 ] })
-  map.placeMarker({ ip: '123.123.123.2', date: Date.now(), ll: [ 53.533778,-132.39624 ]})
-  map.placeMarker({ ip: '123.123.123.3', date: Date.now(), ll: [ -42.065607,146.689453 ]})
-  map.placeMarker({ ip: '123.123.123.4', date: Date.now(), ll: [ 23.563987,120.585938 ]})
-  map.placeMarker({ ip: '123.123.123.5', date: Date.now(), ll: [ -51.835778,-59.765625 ]})
-  map.placeMarker({ ip: '123.123.123.6', date: Date.now(), ll: [ 57.326521,-153.984375 ]})
-  */
+    map.placeMarker({ ip: '123.123.123.1', date: Date.now(), ll: [ 35.325, 25.1306 ] })
+    map.placeMarker({ ip: '123.123.123.2', date: Date.now(), ll: [ 53.533778,-132.39624 ]})
+    map.placeMarker({ ip: '123.123.123.3', date: Date.now(), ll: [ -42.065607,146.689453 ]})
+    map.placeMarker({ ip: '123.123.123.4', date: Date.now(), ll: [ 23.563987,120.585938 ]})
+    map.placeMarker({ ip: '123.123.123.5', date: Date.now(), ll: [ -51.835778,-59.765625 ]})
+    map.placeMarker({ ip: '123.123.123.6', date: Date.now(), ll: [ 57.326521,-153.984375 ]})
+    */
 
     var messages = {
 	object: document.getElementById('messages'),
@@ -527,14 +527,14 @@ window.onload = function () {
 	} // function(client)
     ) // connect
 
-    (
+    ( 
 	function tick () {
 	    /* ages all the markers and send ticks the animFrame */
 	    map.markers.age()
 	    window.requestAnimFrame(tick)
 	}
 	() //??
-    );
+    )
 } //window.onLoad
 
 window.requestAnimFrame = (
