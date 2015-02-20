@@ -49,52 +49,6 @@ function ansiToHtml (text) {
 } //ansiToHtml
 
 window.onload = function () {
-/*    var dots = {
-	object: document.getElementById('dots'),
-	add: function (source) {
-	    if (this.list.length < this.max) {
-		var dot = new Dot(source)
-		this.object.appendChild(dot.object)
-		this.list.push(dot)
-	    }
-	}, //add:
-	max: 1000,
-	list: [],
-	tick: function () {
-	    var self = this
-	    var list = this.list
-	    //var toRemove = []
-	    // draw each in the list
-	    list.forEach(
-		function (dot) {
-		    dot.draw()
-		})
-	    /*toRemove.forEach(function (dot) {
-              list.splice(list.indexOf(dot), 1)
-	      })*/ 
-/*
-	}, //tick:
-	clear: function () {
-	    var self = this
-	    this.list.forEach(function (dot) {
-		self.object.removeChild(dot.object)
-	    })
-	    this.list = []
-	} //clear
-    } //var dots
-
-    function Dot (source) {
-	this.object = document.createElement('div')
-	this.object.className = 'dot'
-	this.x = source.x
-	this.y = source.y
-    } //Dot
-    
-    Dot.prototype.draw = function () {
-	this.object.style.left = Math.floor(this.x) + 'px'
-	this.object.style.top = Math.floor(this.y) + 'px'
-    } //Dot.prototype.draw
-*/
     var map = createMap()
     var active = document.getElementById('active-number')
     var regexpInput = document.getElementById('regexp')
@@ -458,7 +412,6 @@ window.onload = function () {
 	    map.object.style.left = map.offset.x + 'px'
 	    map.object.style.top = map.offset.y + 'px'
 	    map.markers.paint()
-	    //dots.clear()
 	} //onresize
 
 	onresize()
