@@ -50,7 +50,7 @@ html, body {
 
 .marker {
   position:absolute;
-  background:url('maptail-marker.png') top left no-repeat;
+  /*background:url('maptail-marker.png') top left no-repeat;*/
   width:34px;
   height:34px;
   margin-top:-12px;

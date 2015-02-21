@@ -353,6 +353,23 @@ window.onload = function () {
 	    var coords = map.latLongToPx(this.latlon)
 	    this.object.style.left = coords.x + 'px'
 	    this.object.style.top = coords.y + 'px'
+	    // TODO understand why it is this.object not this
+	    //d3.select(this.object)
+	    //document.getElementById('map')
+	    //d3.select(map)
+	    d3.select(this.object)
+	    	.append("svg")
+	    	//.attr("width",  map.size.width)
+		.attr("width", 34)
+ 	    	//.attr("height", map.size.height)
+		.attr("height", 34)
+		.append("circle")
+		.attr("cx", 17)
+		.attr("cy", 17)
+		.attr("r", 1)
+		.attr("stroke","yellow")
+		.attr("stroke-width","1")
+		.style("fill", "none");
 	} // Marker.prototype.paint
 
 	Marker.prototype.age = function () {
