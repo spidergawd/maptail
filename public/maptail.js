@@ -347,6 +347,11 @@ window.onload = function () {
 	    this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '') + this.ip + ' <span class="country">' + (geo.country || '??') + '</span>'
 
 	    this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
+	    //array to keep track of orders in this second
+	    this.counts = [];
+	    for (i=0; i < 2; i++) {
+		this.counts[this.counts.length]=0;
+	    }  
 	} //Marker (geo)
 
 	Marker.prototype.paint = function () {
@@ -357,6 +362,19 @@ window.onload = function () {
 	    //d3.select(this.object)
 	    //document.getElementById('map')
 	    //d3.select(map)
+	    var now = Date.now()
+	    second = Math.floor(now/1000) % 2
+	    this.counts[second] = (this.counts[second] + 1)
+	    // reset prior second
+	    if (second == 0) {
+		this.counts[1] = 0
+	    } else {
+		this.counts[0] = 0
+	    } 
+	    var fillValue="none"
+	    //var fillValue="yellow"
+	    var radius = this.counts[second]
+//	    var radius = 3
 	    d3.select(this.object)
 	    	.append("svg")
 	    	//.attr("width",  map.size.width)
@@ -366,10 +384,10 @@ window.onload = function () {
 		.append("circle")
 		.attr("cx", 17)
 		.attr("cy", 17)
-		.attr("r", 1)
+		.attr("r", radius)
 		.attr("stroke","yellow")
 		.attr("stroke-width","1")
-		.style("fill", "none");
+		.style("fill", fillValue);
 	} // Marker.prototype.paint
 
 	Marker.prototype.age = function () {

@@ -47,7 +47,16 @@
       d3.select("body").append("p").text("hello");      
       d3.select("body").append("p").text(now/1000);
       //TODO modulus to keep count per second of last 10 seconds
-      d3.select("body").append("p").text(Math.floor(now/1000));
+      d3.select("body").append("p").text(Math.floor(now/1000) % 2);
+      var counts = [];
+      for (i=0; i < 2; i++) {
+		    counts[counts.length]=0;
+      }  
+		    second = Math.floor(now/1000) % 2
+		    counts[second] = (counts[second] + 1)
+      for (i=0; i<2; i++) {
+		     d3.select("body").append("p").text(counts[i]);    
+      } 
     </script>
     <svg width="100" height="100">
       <path d=" M 10 25
