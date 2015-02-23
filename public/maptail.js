@@ -51,14 +51,12 @@ function ansiToHtml (text) {
 window.onload = function () {
     var map = createMap()
     var active = document.getElementById('active-number')
-    var regexpInput = document.getElementById('regexp')
 
     // current events with geo match
     var matches = {
 	object: document.getElementById('matches'),
 	list: {},
 	length: 0,
-	regexp: false,
 	maxAge: 10,
 	recalcMaxAge: function () {
 	    // commented out because I don't think I need this
@@ -81,16 +79,12 @@ window.onload = function () {
 		Math.pow(self.maxAge, item.hits))
 	}, //destroySoon
 	consider: function (geo) {
-	    // evaluates receved event against regular expression
 	    // conditionally adds to list and
 	    // (re)sets timer via destroySoon 
 	    var self = this
 	    var list = this.list
 	    var found = false, item
-	    if (geo.message && 
-		( (geo.message.match(this.regexp)) || 
-		  (geo.country && geo.country.match(this.regexp)) || 
-		  (geo.city && geo.city.match(this.regexp)) ) ) {
+	    if (geo.message) {
 		for (var k in this.list) {
 		    if (levenshtein(geo.message, k) <= 12) {
 			found = true
@@ -108,12 +102,11 @@ window.onload = function () {
 		    this.recalcMaxAge()
 		    this.destroySoon(geo.message, item)
 		} //!found
-	    } // if... passes regexp
+	    } // if (geo.message)
 	}, //consider
 	clear: function () {
 	    this.object.innerHTML = ''
 	    this.list = {}
-	    this.regexp = false
 	} //clear
     } //var matches
 
@@ -469,21 +462,6 @@ window.onload = function () {
 
 	return map
     } //createMap
-
-    regexpInput.onkeyup = function (e) {
-	var val = this.value.toString().trim()
-	if (e.which == 13) {
-	    matches.clear()
-	    if (val.length) {
-		matches.regexp = new RegExp(val, 'igm')
-		messages.lines.forEach(function (line) {
-		    matches.consider(line.message)
-		})
-	    }
-	}
-    } // regexpInput.onKeyup
-
-    matches.regexp = regexpInput.value && new(RegExp(regexpInput.value, 'igm')) || false
 
     connect(
 	function (client) {  
