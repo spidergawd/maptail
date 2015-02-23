@@ -306,6 +306,7 @@ window.onload = function () {
 		clearTimeout(marker.visitorTimeout)
 		marker.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
 		marker.date = geo.date
+		marker.paint()
 	    }
 	} //map.placeMarker
 	map.object.style.position = 'absolute'
@@ -334,12 +335,14 @@ window.onload = function () {
 		+ (geo.city ? geo.city + ', ' : '') + (geo.country ? geo.country : 'unknown')
 		+ '</div>'
 		+ '<div class="age">active <span class="age-number">23.1</span>s ago</div>'
+		+ '<div class="count">count <span class="count-number">0</span></div>'
 		+ '</div>'
 	    this.object.innerHTML = html
 	    this.inner = {}
 	    this.inner.ageNumber = this.object.getElementsByClassName('age-number')[0]
 	    this.inner.ageNumber.textContent = '0.0'
-
+	    this.inner.countNumber = this.object.getElementsByClassName('count-number')[0]
+	    this.inner.countNumber.textContent = '0'
 	    this.ipList = {
 		object: document.createElement('div')
 	    }
@@ -358,12 +361,9 @@ window.onload = function () {
 	    var coords = map.latLongToPx(this.latlon)
 	    this.object.style.left = coords.x + 'px'
 	    this.object.style.top = coords.y + 'px'
-	    // TODO understand why it is this.object not this
-	    //d3.select(this.object)
-	    //document.getElementById('map')
-	    //d3.select(map)
+	    //TODO use Geo.Date instead of now (with 60 seconds of history?)
 	    var now = Date.now()
-	    second = Math.floor(now/1000) % 2
+	    var second = Math.floor(now/1000) % 2
 	    this.counts[second] = (this.counts[second] + 1)
 	    // reset prior second
 	    if (second == 0) {
@@ -371,23 +371,34 @@ window.onload = function () {
 	    } else {
 		this.counts[0] = 0
 	    } 
+	    this.inner.countNumber.textContent = this.counts[0] + ":" + this.counts[1]
 	    var fillValue="none"
 	    //var fillValue="yellow"
 	    var radius = this.counts[second]
 //	    var radius = 3
-	    d3.select(this.object)
-	    	.append("svg")
+	    // TODO understand why it is this.object not this
+	    var circleSvg = d3.select(this.object).select("svg")[0]
+	    if (circleSvg[0] == null) {
+		d3.select(this.object)
+	    	    .append("svg")
 	    	//.attr("width",  map.size.width)
-		.attr("width", 34)
+		    .attr("width", 34)
  	    	//.attr("height", map.size.height)
-		.attr("height", 34)
-		.append("circle")
-		.attr("cx", 17)
-		.attr("cy", 17)
-		.attr("r", radius)
-		.attr("stroke","yellow")
-		.attr("stroke-width","1")
-		.style("fill", fillValue);
+		    .attr("height", 34)
+		    .append("circle")
+		    .attr("cx", 17)
+		    .attr("cy", 17)
+		    .attr("r", radius)
+		    .attr("stroke","yellow")
+		    .attr("stroke-width","1")
+		    .style("fill", fillValue);
+	    } else {
+		var svg = d3.select(circleSvg)[0]	
+		var circle = d3.select(this.object).select("svg").select("circle").attr("r",radius)
+//		var circle = d3.select(svg).select("circle")
+		//circle0[0].attr("r", radius)
+		//    .attr("r", radius)
+	    }
 	} // Marker.prototype.paint
 
 	Marker.prototype.age = function () {
