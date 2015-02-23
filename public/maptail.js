@@ -393,11 +393,7 @@ window.onload = function () {
 		    .attr("stroke-width","1")
 		    .style("fill", fillValue);
 	    } else {
-		var svg = d3.select(circleSvg)[0]	
 		var circle = d3.select(this.object).select("svg").select("circle").attr("r",radius)
-//		var circle = d3.select(svg).select("circle")
-		//circle0[0].attr("r", radius)
-		//    .attr("r", radius)
 	    }
 	} // Marker.prototype.paint
 
