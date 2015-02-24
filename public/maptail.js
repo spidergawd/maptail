@@ -3,8 +3,16 @@ var config = { timeDiff: 0 }
 
 // visitors
 var visitors = 0
-function visitorsInc () { visitors++ }
-function visitorsDec () { visitors-- }
+function visitorsInc () { 
+    visitors++ 
+}
+function visitorsDec () { 
+    visitors--
+    // workaround for bug such that visitors goes negative
+    if (0 > visitors) {
+	visitors = 0;
+    }
+}
 
 // app
 
@@ -49,6 +57,7 @@ function ansiToHtml (text) {
 } //ansiToHtml
 
 window.onload = function () {
+    visitors = 0
     var map = createMap()
     var active = document.getElementById('active-number')
 
