@@ -25,22 +25,6 @@ html, body {
   z-index:10;
 }
 
-#active {
-  position:fixed;
-  left:10px;
-  top:0;
-  color:#666;
-  font-family:Verdana, Arial, Helvetica, sans-serif;
-  font-weight:normal;
-  font-size:16px;
-  z-index:10;
-}
-
-#active-number {
-  font-size:50px;
-  vertical-align:middle;
-}
-
 #markers {
   z-index:20;
   position:absolute;
@@ -50,7 +34,6 @@ html, body {
 
 .marker {
   position:absolute;
-  /*background:url('maptail-marker.png') top left no-repeat;*/
   width:34px;
   height:34px;
   margin-top:-12px;
@@ -126,23 +109,6 @@ html, body {
   color:yellow;
 }
 
-#regexp {
-  position:fixed;
-  top:11px;
-  left:200px;
-  z-index:100;
-  background:rgba(0,0,0,0.3);
-  border:1px solid #222;
-  padding:6px;
-  font-family:Consolas;
-  font-size:14px;
-  color:yellow;
-}
-
-#regexp:focus {
-  border-color:#555;
-}
-
 #matches {
   position:fixed;
   top:52px;
@@ -152,20 +118,6 @@ html, body {
   font-family:Consolas, Courier New;
   font-size:12px;
   line-height:11px;
-}
-
-#dots {
-  z-index:1000;
-}
-
-.dot {
-  position:fixed;
-  left:-100px;
-  top:-100px;
-  width:4px;
-  height:4px;
-  background:url(maptail-dot.png) top left no-repeat;
-  z-index:15;
 }
 
 .ribbon {

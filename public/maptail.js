@@ -1,19 +1,6 @@
 // config
 var config = { timeDiff: 0 }
 
-// visitors
-var visitors = 0
-function visitorsInc () { 
-    visitors++ 
-}
-function visitorsDec () { 
-    visitors--
-    // workaround for bug such that visitors goes negative
-    if (0 > visitors) {
-	visitors = 0;
-    }
-}
-
 // app
 
 function connect (callback) {
@@ -57,7 +44,6 @@ function ansiToHtml (text) {
 } //ansiToHtml
 
 window.onload = function () {
-    visitors = 0
     var map = createMap()
     var active = document.getElementById('active-number')
 
@@ -299,14 +285,11 @@ window.onload = function () {
 	    var marker
 	    geo.date += config.timeDiff
 	    if (!(geo.ip in this.markers.list)) {
-		visitorsInc()
 		marker = new Marker(geo)
 		marker.paint()
 		this.markers.add(marker)
 	    } else {
 		marker = this.markers.list[geo.ip]
-		clearTimeout(marker.visitorTimeout)
-		marker.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
 		marker.date = geo.date
 		marker.paint()
 	    }
@@ -351,11 +334,10 @@ window.onload = function () {
 	    this.ipList.object.className = 'ip'
 	    this.ipList.object.innerHTML = (geo.city ? '<span class="city">' + geo.city + '</span> ' : '')  + ' <span class="country">' + (geo.country || '??') + '</span>'
 
-	    this.visitorTimeout = setTimeout(visitorsDec, config.maxAge * 1000)
 	    //array to keep track of orders in this second
 	    this.counts = [];
 	    for (i=0; i < 2; i++) {
-		this.counts[this.counts.length]=0;
+		this.counts[i]=0;
 	    }  
 	} //Marker (geo)
 
@@ -365,19 +347,18 @@ window.onload = function () {
 	    this.object.style.top = coords.y + 'px'
 	    //TODO use Geo.Date instead of now (with 60 seconds of history?)
 	    var now = Date.now()
-	    var second = Math.floor(now/1000) % 2
-	    this.counts[second] = (this.counts[second] + 1)
-	    // reset prior second
-	    if (second == 0) {
+	    var modSecond = Math.floor(now/1000) % 2
+	    this.counts[modSecond] = (this.counts[modSecond] + 1)
+	    // reset "prior" second
+	    this.inner.countNumber.textContent = (this.counts[modSecond]) + "/sec"
+	    if (modSecond == 0) {
 		this.counts[1] = 0
 	    } else {
 		this.counts[0] = 0
 	    } 
-	    this.inner.countNumber.textContent = this.counts[0] + ":" + this.counts[1]
 	    var fillValue="none"
 	    //var fillValue="yellow"
-	    var radius = this.counts[second]
-//	    var radius = 3
+	    var radius = this.counts[modSecond]
 	    // TODO understand why it is this.object not this
 	    var circleSvg = d3.select(this.object).select("svg")[0]
 	    if (circleSvg[0] == null) {
@@ -494,7 +475,6 @@ window.onload = function () {
 						 if (geo.ll) { 
 						     map.placeMarker(geo)
 						 }
-						 active.textContent = visitors
 						 if (geo.message) {
 						     messages.add(geo.message)
 						     // evaluate the geo 
