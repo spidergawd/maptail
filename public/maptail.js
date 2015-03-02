@@ -358,26 +358,45 @@ window.onload = function () {
 	    } 
 	    var fillValue="none"
 	    //var fillValue="yellow"
-	    var radius = this.counts[modSecond]
+	    var applicableCount = this.counts[modSecond]
+	    var radius = applicableCount
 	    // TODO understand why it is this.object not this
 	    var circleSvg = d3.select(this.object).select("svg")[0]
 	    if (circleSvg[0] == null) {
-		d3.select(this.object)
-	    	    .append("svg")
-	    	//.attr("width",  map.size.width)
+		d3.select(this.object).append("svg")
+		//.attr("width",  map.size.width)
 		    .attr("width", 34)
  	    	//.attr("height", map.size.height)
 		    .attr("height", 34)
 		    .append("circle")
+		    .attr("id","primaryCircle")
 		    .attr("cx", 17)
 		    .attr("cy", 17)
 		    .attr("r", radius)
 		    .attr("stroke","yellow")
 		    .attr("stroke-width","1")
 		    .style("fill", fillValue);
+	    } 
+	    
+	    if (applicableCount > 3) {
+		radius = 15;
+		d3.select(this.object).select("svg").
+		    select("#primaryCircle").attr("r",radius);
+		d3.select(this.object).select("svg").append("circle")
+		    .attr("id","innerCircle")
+		    .attr("r",3)
+		    .attr("cx", 17)
+		    .attr("cy", 17)
+		    .attr("stroke","yellow")
+		    .attr("stroke-width","1")
+		    .attr("fill","yellow");
 	    } else {
-		var circle = d3.select(this.object).select("svg").select("circle").attr("r",radius)
-	    }
+		d3.select(this.object).select("svg")
+		    .select("#innerCircle")
+		    .remove();
+		d3.select(this.object).select("svg").
+		    select("#primaryCircle").attr("r",radius);
+	    } 
 	} // Marker.prototype.paint
 
 	Marker.prototype.age = function () {
