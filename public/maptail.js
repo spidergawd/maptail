@@ -45,7 +45,8 @@ function ansiToHtml (text) {
 
 window.onload = function () {
     var map = createMap()
-    var active = document.getElementById('active-number')
+//TODO remove?
+//    var active = document.getElementById('active-number')
 
     // current events with geo match
     var matches = {
@@ -356,110 +357,17 @@ window.onload = function () {
 	    } else {
 		this.counts[0] = 0
 	    } 
-	    var fillValue="none"
-	    //var fillValue="yellow"
 	    var applicableCount = this.counts[modSecond]
-	    var radius = applicableCount
 	    // TODO understand why it is this.object not this
-	    var circleSvg = d3.select(this.object).select("svg")[0]
-	    if (circleSvg[0] == null) {
-		d3.select(this.object).append("svg")
+	    var circleSvg = d3.select(this.object).select("svg")
+	    if (circleSvg[0][0] == null) {
+		circleSvg = d3.select(this.object).append("svg")
 		//.attr("width",  map.size.width)
 		    .attr("width", 34)
  	    	//.attr("height", map.size.height)
-		    .attr("height", 34)
-		    .append("circle")
-		    .attr("id","primaryCircle")
-		    .attr("cx", 17)
-		    .attr("cy", 17)
-		    .attr("r", radius)
-		    .attr("stroke","yellow")
-		    .attr("stroke-width","1")
-		    .style("fill", fillValue);
+		    .attr("height", 34);
 	    } 
-	    var primaryCircleRadiusLimit = 15;
-            if (radius > primaryCircleRadiusLimit) {
-		radius = radius - primaryCircleRadiusLimit;
-		d3.select(this.object).select("svg").
-		    select("#primaryCircle").
-		    attr("r",primaryCircleRadiusLimit);
-		//add middle circle if not extant
-		if (null == d3.select(this.object).select("svg").select('#middleCircle')) {
-		    d3.select(this.object).select("svg").append("circle")
-			.attr("id","#middleCircle")
-			.attr("cx", 17)
-			.attr("cy", 17)
-			.attr("stroke","yellow")
-			.attr("stroke-width","1")
-			.attr("fill","none");
-		}
-		var middleCircleRadiusLimit = 10;
-		if (radius > middleCircleRadiusLimit) {
-		    radius = radius - middleCircleRadiusLimit;
-		    d3.select(this.object).select("svg").
-			select("#middleCircle").
-			attr("r", middleCircleRadiusLimit);
-		    //add inner circle
-		    if (null == d3.select(this.object).select("svg").select('#innerCircle')) {
-			d3.select(this.object).select("svg").append("circle")
-			    .attr("id","#innerCircle")
-			    .attr("cx", 17)
-			    .attr("cy", 17)
-			    .attr("stroke","yellow")
-			    .attr("stroke-width","1")
-			    .attr("fill","none");
-		    }
-		    var innerCircleRadiusLimit = 5;
-		    if (radius > innerCircleRadiusLimit) {
-			radius = radius - innerCircleRadiusLimit;
-			d3.select(this.object).select("svg").select("#innerCircle")
-			    .attr("stroke","yellow")
-			    .attr("r", innerCircleRadiusLimit);
-			if (radius > 5) {
-			    radius = radius - 5;
-			    d3.select(this.object).select("svg").select("#innerCircle")
-			    	.attr("fill","yellow");
-			}
-			if (radius > 5) {
-			    radius = radius - 5;
-			    d3.select(this.object).select("svg").select("#innerCircle")
-			    	.attr("fill","red");
-			}
-			if (radius > 5) {
-			    radius = radius - 5;
-			    d3.select(this.object).select("svg").select("middleCircle")
-			    	.attr("stroke","red");
-			}
-			if (radius > 5) {
-			    d3.select(this.object).select("svg").select("primaryCircle")
-			    	.attr("stroke","red");
-			}
-		    } else {
-			d3.select(this.object).select("svg").select("#innerCircle")
-			    .attr("fill","none")
-			    .attr("stroke","yellow")
-			    .attr("r",radius);
-		    }		    		  
-		} else { // radius does not exceed middle circle limit
-		    d3.select(this.object).select("svg")
-			.select("#middleCircle")
-			.attr("stroke","yellow")
-			.attr("r",radius);
-		    d3.select(this.object).select("svg")
-			.select("#innerCircle")
-			.remove();
-		}
-	    } else { // radius does not exceed primary circle limit
-		d3.select(this.object).select("svg")
-		    .select("#middleCircle")
-		    .remove();
-		d3.select(this.object).select("svg")
-		    .select("#innerCircle")
-		    .remove();
-		d3.select(this.object).select("svg").select("#primaryCircle")
-		    .attr("stroke","yellow")
-		    .attr("r",radius);
-	    } 
+	    paintEvent(circleSvg, applicableCount);
 	} // Marker.prototype.paint
 
 	Marker.prototype.age = function () {

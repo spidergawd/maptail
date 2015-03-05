@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="base.css">
     <script type="text/javascript" src="file:///home/david/dev/maptail/maptail/public/d3.min.js"></script>
+    <script type="text/javascript" src="file:///home/david/dev/maptail/maptail/public/paint-event.js"></script>
   </head>
   <body>
     <script type="text/javascript">
-      d3.select("body")
+      for (i=0; i < 51; i++) {
+		    var svgContainer = d3.select("body").append("svg")
+		    .attr("width", 34)
+		    .attr("height", 34)
+		    .attr("class","event-svg-container")
+		    .style("border", "1px solid red")
+
+		    paintEvent(svgContainer, i);
+
+		    d3.select("body").append("p").text(i)
+		    }
+    d3.select("body")
       .append("svg")
       .attr("width", 50)
       .attr("height", 50)
@@ -16,7 +29,7 @@
       .attr("stroke","black")
       .attr("stroke-width","2")
       .style("fill", "none");
-        
+      
       var jsonCircles = [
       { "x_axis": 30, "y_axis": 30, "radius": 20, "color" : "green" },
       { "x_axis": 70, "y_axis": 70, "radius": 20, "color" : "purple"},
@@ -25,24 +38,24 @@
       var p = d3.select("body").append("p");
 
       var svgContainer = d3.select("body").append("svg")
-                           .attr("width", 200)
-                           .attr("height", 200)
-                           .style("border", "1px solid black");
+      .attr("width", 200)
+      .attr("height", 200)
+      .style("border", "1px solid black");
       var circles = svgContainer.selectAll("circle")
-                                 .data(jsonCircles)
-                                 .enter()
-                                 .append("circle");
+      .data(jsonCircles)
+      .enter()
+      .append("circle");
       var circleAttributes = circles.attr("cx",    function (d) {return d.x_axis;})
-                                    .attr("cy",    function (d) {return d.y_axis;})
-                                    .attr("r",     function (d) { return d.radius;})
-                                    .style("fill", function (d) {return d.color;});
+      .attr("cy",    function (d) {return d.y_axis;})
+      .attr("r",     function (d) { return d.radius;})
+      .style("fill", function (d) {return d.color;});
       var circle = svgContainer.append("line")
-                         .attr("x1", 30)
-                         .attr("y1", 30)
-                         .attr("x2", 110)
-                         .attr("y2", 100)
-                         .attr("stroke","gray") 
-                         .attr("stroke-width",5);
+      .attr("x1", 30)
+      .attr("y1", 30)
+      .attr("x2", 110)
+      .attr("y2", 100)
+      .attr("stroke","gray") 
+      .attr("stroke-width",5);
       var now = Date.now()
       d3.select("body").append("p").text("hello");      
       d3.select("body").append("p").text(now/1000);
@@ -51,12 +64,13 @@
       var counts = [];
       for (i=0; i < 2; i++) {
 		    counts[counts.length]=0;
-      }  
-		    second = Math.floor(now/1000) % 2
-		    counts[second] = (counts[second] + 1)
-      for (i=0; i<2; i++) {
-		     d3.select("body").append("p").text(counts[i]);    
-      } 
+		    }  
+		    second = Math.floor(now/1000) % 2;
+		    counts[second] = (counts[second] + 1);
+		    for (i=0; i<2; i++) {
+				   d3.select("body").append("p").text(counts[i]);    
+				   } 
+				   
     </script>
     <svg width="100" height="100">
       <path d=" M 10 25
