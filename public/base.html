@@ -18,6 +18,18 @@
 
 		    d3.select("body").append("p").text(i)
 		    }
+      for (i=50; i > 0; i--) {
+		    var svgContainer = d3.select("body").append("svg")
+		    .attr("width", 34)
+		    .attr("height", 34)
+		    .attr("class","event-svg-container")
+		    .style("border", "1px solid red")
+
+		    paintEvent(svgContainer, i);
+
+		    d3.select("body").append("p").text(i)
+		    }
+
     d3.select("body")
       .append("svg")
       .attr("width", 50)

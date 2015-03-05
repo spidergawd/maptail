@@ -1,22 +1,13 @@
 function paintEvent(svgContainer, applicableCount) {
 	    var fillValue="none"
-	    //var fillValue="yellow"
 	    var radius = applicableCount
 	    // TODO understand why it is this.object not this
-/*	    var circleSvg = d3.select(this.object).select("svg")[0]
-	    if (circleSvg[0] == null) {
-		d3.select(this.object).append("svg")
-		//.attr("width",  map.size.width)
-		    .attr("width", 34)
- 	    	//.attr("height", map.size.height)
-		    .attr("height", 34)*/
             if (null == svgContainer.select('#primaryCircle')[0][0]) {
 		svgContainer
 		    .append("circle")
 		    .attr("id","primaryCircle")
 		    .attr("cx", 17)
 		    .attr("cy", 17)
-//		    .attr("r", radius)
 		    .attr("stroke","yellow")
 		    .attr("stroke-width","1")
 		    .style("fill", fillValue);
@@ -24,7 +15,6 @@ function paintEvent(svgContainer, applicableCount) {
 	    var primaryCircleRadiusLimit = 15;
             if (radius > primaryCircleRadiusLimit) {
 		radius = radius - primaryCircleRadiusLimit;
-//		d3.select(this.object).select("svg").
 		svgContainer.select("#primaryCircle")
 		    .attr("r",primaryCircleRadiusLimit);
 		//add middle circle if not extant
@@ -57,6 +47,7 @@ function paintEvent(svgContainer, applicableCount) {
 			radius = radius - innerCircleRadiusLimit;
 			svgContainer.select("#innerCircle")
 			    .attr("stroke","yellow")
+			    .attr("fill","none")
 			    .attr("r", innerCircleRadiusLimit);
 			svgContainer.append("circle")
 			    .attr("id","innerMostCircle")
@@ -101,16 +92,19 @@ function paintEvent(svgContainer, applicableCount) {
 			    .attr("fill","none")
 			    .attr("stroke","yellow")
 			    .attr("r",radius);
+			svgContainer.select("#innerMostCircle").remove();
 		    }		    		  
 		} else { // radius does not exceed middle circle limit
 		    svgContainer.select("#middleCircle")
 			.attr("stroke","yellow")
 			.attr("r",radius);
+		    svgContainer.select("#innerMostCircle").remove();
 		    svgContainer.select("#innerCircle").remove();
 		}
 	    } else { // radius does not exceed primary circle limit
 		svgContainer.select("#middleCircle").remove();
 		svgContainer.select("#innerCircle").remove();
+		svgContainer.select("#innerMostCircle").remove();
 		svgContainer.select("#primaryCircle")
 		    .attr("stroke","yellow")
 		    .attr("r",radius);
